@@ -49,7 +49,7 @@ implements CompoundButton.OnCheckedChangeListener//, CompoundButton.
 	            "Корректировки", "Кредиты", "Одежда", "Подарки и праздники", 
 	            "Прочее", "Путешествие", "Счета", "Транспорт", "Электроника"};
 	
-	//test commit 4
+	//test commit 5
 	//Date
     private Button mPickDate;
     private int mYear;

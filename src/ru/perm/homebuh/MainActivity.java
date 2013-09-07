@@ -31,7 +31,6 @@ public class MainActivity extends Activity
 implements CompoundButton.OnCheckedChangeListener//, CompoundButton.
 ,AdapterView.OnItemSelectedListener // For Categories (spinner)
 {
-
     
 	CheckBox cb;
 	AutoCompleteTextView mAutoComplete;

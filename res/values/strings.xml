@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">homebuh</string>
+    <string name="action_settings">Settings</string>
+    <string name="hello_world">Hello Android!</string>
+
+    <string name="button1">Button 1</string>
+    <string name="button2">Button 2</string>
+    <string name="button3">Button 3</string>
+    
+    <string name="sum_edit_placeholder">Сумма</string>
+    
+    
+</resources>

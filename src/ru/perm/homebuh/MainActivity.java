@@ -23,7 +23,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -45,23 +44,7 @@ implements CompoundButton.OnCheckedChangeListener//, CompoundButton.
 	ThreadUpdateCategories mThreadUpdateCategories;
 	
 	CheckBox cb;
-	AutoCompleteTextView mAutoComplete;
-	final String[] mContacts = {
-            "Jacob Anderson", "Emily Duncan", "Michael Fuller", 
-            "Emma Greenman", "Joshua Harrison", "Madison Johnson",
-            "Matthew Cotman", "Olivia Lawson", "Andrew Chapman", 
-            "Michael Honeyman", "Isabella Jackson", "William Patterson", 
-            "Joseph Godwin", "Samantha Bush", "Christopher Gateman"};
 	
-	static String[] accountData = { "Наличные", "Связной", "ПКБ" };
-	
-	final String[] mCategories = {
-	            "Авто", "Досуг и отдых", "Еда", 
-	            "Здоровье и красота", "Иммиграция", "Квартира",
-	            "Корректировки", "Кредиты", "Одежда", "Подарки и праздники", 
-	            "Прочее", "Путешествие", "Счета", "Транспорт", "Электроника"};
-	
-	//test commit 11
 	//Date
     private Button mPickDate;
     private int mYear;
@@ -126,24 +109,10 @@ implements CompoundButton.OnCheckedChangeListener//, CompoundButton.
         spn2 = (Spinner)findViewById(R.id.spinnerCat2);
         spn2.setOnItemSelectedListener(this);
         
-        // --- Database ---
-        // создаем объект для создания и управления версиями БД
+        // создаем объект для создания и управления версиями БД и подключаемся к БД
         dbHelper = new DBHelper(this);
-        
-    	// создаем объект для данных
-		//ContentValues cv = new ContentValues();
-
-		// подключаемся к БД
 		SQLiteDatabase db = dbHelper.getWritableDatabase();
         
-		/*
-		cv.put("_id", 7);
-		cv.put("parent_id", 5);
-		cv.put("name", "3_я_запись_ид7");
-		cv.put("pe", "profit");
-		long rowID = db.insert("category", null, cv);
-		*/
-		
 	    String[] queryCols=new String[]{"_id", "name"};
 	    String[] adapterCols=new String[]{"name"};
 	    int[] adapterRowViews=new int[]{android.R.id.text1};
@@ -198,7 +167,6 @@ implements CompoundButton.OnCheckedChangeListener//, CompoundButton.
 	// Categories 1
     public void onItemSelected(
             AdapterView<?> parent, View v, int position, long id) {
-            //mLabel.setText(mContacts[position]);
     	
     	Toast toast = Toast.makeText(this, id + " !", Toast.LENGTH_SHORT);
         //toast.setGravity(Gravity.CENTER, 0, 0);
@@ -210,7 +178,7 @@ implements CompoundButton.OnCheckedChangeListener//, CompoundButton.
             //mLabel.setText("");
     }
 	
-	// Date
+	// Диалоги
     @Override
     protected Dialog onCreateDialog(int id) {
         switch (id) {
@@ -243,10 +211,6 @@ implements CompoundButton.OnCheckedChangeListener//, CompoundButton.
 	                
 	                keyDlgEdit.setText(""); // Чистим чтобы не палить ключ
 	                
-//	                CharSequence message = keyDlgEdit.getText().toString();
-	//            	Toast toast = Toast.makeText(MainActivity.this, message, Toast.LENGTH_SHORT);
-	  //  	        toast.show();
-
                     //MainActivity.this.finish();
                 }
             });
@@ -339,7 +303,6 @@ implements CompoundButton.OnCheckedChangeListener//, CompoundButton.
 			    					toast.show();
 			    			}
     
-					    
 					}
 					// Как же его обновить?
 					//Cat1Cursor.requery();
@@ -368,16 +331,15 @@ implements CompoundButton.OnCheckedChangeListener//, CompoundButton.
 	            case IDM_UPDATE_CATEGORIES:
 	            	
 	            	// Даем обновлять категории только если нет несинхронизированных расходов
-
 	            	dbHelper = new DBHelper(this);
 	         		SQLiteDatabase db = dbHelper.getWritableDatabase();
-
 	         		Cursor tmp = db.query(true,"data_", null,null,null,null,null,null,null);
 	         	   
 	         		if (tmp.getCount()>0 ) {
 	         			Toast toast = Toast.makeText(this, "Сначала синхронизируйте расходы!", Toast.LENGTH_SHORT);
 						toast.show();     
 					} else {
+						// Запускаем новый поток для вытягивания категорий с удаленного сервера
 						mThreadUpdateCategories = new ThreadUpdateCategories(handler);
 					    mThreadUpdateCategories.start();
 					}
@@ -385,32 +347,12 @@ implements CompoundButton.OnCheckedChangeListener//, CompoundButton.
 	         		tmp.close();
 	         		dbHelper.close();
 	                
-	                //return mProgressDialog;
-	            	
-	            	/*
-	            	try {
-	    				dbHelper = new DBHelper(MainActivity.this);
-	    				dbHelper.insertCategory(1, -1, "первая", "expense");
-	    				dbHelper.insertCategory(2, 1, "вторая", "expense");
-	    				dbHelper.insertCategory(3, 1, "3-я", "expense");
-	    				dbHelper.insertCategory(7, 1, "7-я", "expense");
-	    				dbHelper.close();
-	    				}
-	    				catch (Exception e) {
-	    					Toast toast = Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT);
-	    					toast.show();
-	    				}
-	            	*/
-	            	
 	            	//Toast toast = Toast.makeText(this, message, Toast.LENGTH_SHORT);
 	    	        //toast.setGravity(Gravity.CENTER, 0, 0);
 	    	        //toast.show();
 	                break;
 	            case IDM_KEY_SYNC:
 	            	showDialog(KEY_DIALOG_ID);
-	            	
-	            
-	                 
 	                break;    
 	                
 	            default:
@@ -474,10 +416,6 @@ implements CompoundButton.OnCheckedChangeListener//, CompoundButton.
         
 		// закрываем подключение к БД
 		dbHelper.close();
-        
-        
-        
-        
         
 	}
 	

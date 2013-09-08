@@ -295,24 +295,22 @@ implements CompoundButton.OnCheckedChangeListener//, CompoundButton.
 	// Поток для обновления категорий из инета
     final Handler handler = new Handler() {
         public void handleMessage(Message msg) {
-            //int total = msg.getData().getInt("total");
-            String rsp = msg.getData().getString("rsp");
 
-//            TextView txt = (TextView)findViewById(R.id.textView1);
-  //  		txt.setText(rsp);
+            String rsp = msg.getData().getString("rsp");
+            Boolean lWasError = msg.getData().getBoolean("wasError");
             
-         //   mProgressDialog.setProgress(total);
-          //  if (total >= 100){
-            //    dismissDialog(IDD_PROGRESS);
-                mThreadUpdateCategories.setState(ThreadUpdateCategories.STATE_DONE);
-                //Toast.makeText(getApplicationContext(), "Task is finished: "+rsp, Toast.LENGTH_LONG).show();
-                
-                long lInsertedRows = 0;
+            mThreadUpdateCategories.setState(ThreadUpdateCategories.STATE_DONE);
+
+            if (lWasError) {
+            	Toast.makeText(getApplicationContext(), "Ошибка обновления категорий: " + rsp, Toast.LENGTH_LONG).show();
+            } else {
+				
+            	long lInsertedRows = 0;
                 long lastInsertId;
                 
                 try {
+                	// http://stackoverflow.com/questions/9605913/how-to-parse-json-in-android
 					JSONObject jObject = new JSONObject(rsp);
-				//	String aJsonString = jObject.getString("message");
 					JSONArray jArray = jObject.getJSONArray("cats");
 					
 					dbHelper = new DBHelper(MainActivity.this);
@@ -356,10 +354,9 @@ implements CompoundButton.OnCheckedChangeListener//, CompoundButton.
                 
                 Toast.makeText(getApplicationContext(), "Вставлено " + lInsertedRows + " записей", Toast.LENGTH_SHORT).show();
                 
+            } // was Inet Error ?
                 
                 
-                
-            //}
         }
     };  
 	

@@ -28,9 +28,12 @@ public class ThreadUpdateCategories extends Thread {
     public void run() {
         mState = STATE_RUNNING;   
         mTotal = 0;
+        Boolean lWasError;
         
         if (mState == STATE_RUNNING) {
 	        
+        	lWasError = false;
+        	
 	        String result = ";(";
 	        String url = "http://hb.perm.ru/android/getcategories";
 	        HttpClient httpClient = new DefaultHttpClient();
@@ -49,13 +52,15 @@ public class ThreadUpdateCategories extends Thread {
 	         }
 	        }
 	        catch (Exception e) {
-	         result = e.toString() +" Message:" +e.getMessage(); 
+	         result = e.toString() +" Message:" +e.getMessage();
+	         lWasError = true;
 	        }
 	        
 	        Message msg = mHandler.obtainMessage();
 	        Bundle b = new Bundle();
 	        //b.putInt("total", mTotal);
 	        b.putString("rsp", result);
+	        b.putBoolean("wasError", lWasError);
 	        msg.setData(b);
 	        mHandler.sendMessage(msg);
 	        

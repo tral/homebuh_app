@@ -12,6 +12,20 @@ import android.database.sqlite.SQLiteOpenHelper;
       super(context, "homebuhDB", null, 1);
     }
 
+    public long insertCategory(int _id,  int parent_id, String name, String pe) {
+    	SQLiteDatabase db = this.getWritableDatabase();
+		ContentValues cv = new ContentValues();
+		cv.put("_id", _id);
+		if (parent_id>0) {
+			cv.put("parent_id", parent_id);
+		}
+		cv.put("name", name);
+		cv.put("pe", pe);
+		long rowID = db.insert("category", null, cv);
+		return rowID;
+    			
+    }
+    
     @Override
     public void onCreate(SQLiteDatabase db) {
       //Log.d(LOG_TAG, "--- onCreate database ---");
@@ -33,7 +47,7 @@ import android.database.sqlite.SQLiteOpenHelper;
       
       // Договорились, что ключ хранится в таблице с _id=1
       cv.put("_id", 1);
-      cv.put("key_val", "Gyfhr76yr89");
+      cv.put("key_val", "fake_secret_key");
       db.insert("keys", null, cv);  
       
     }

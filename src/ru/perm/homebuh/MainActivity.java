@@ -11,6 +11,8 @@ import android.content.DialogInterface;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -36,6 +38,8 @@ implements CompoundButton.OnCheckedChangeListener//, CompoundButton.
 ,AdapterView.OnItemSelectedListener // For Categories (spinner)
 {
     
+	ThreadUpdateCategories mThreadUpdateCategories;
+	
 	CheckBox cb;
 	AutoCompleteTextView mAutoComplete;
 	final String[] mContacts = {
@@ -280,16 +284,61 @@ implements CompoundButton.OnCheckedChangeListener//, CompoundButton.
 		 return(super.onCreateOptionsMenu(menu));
 	}
 
+	
+    // Define the Handler that receives messages from the thread and update the progress
+	// ѕоток дл€ обновлени€ категорий из инета
+    final Handler handler = new Handler() {
+        public void handleMessage(Message msg) {
+            //int total = msg.getData().getInt("total");
+            String rsp = msg.getData().getString("rsp");
+
+//            TextView txt = (TextView)findViewById(R.id.textView1);
+  //  		txt.setText(rsp);
+            
+         //   mProgressDialog.setProgress(total);
+          //  if (total >= 100){
+            //    dismissDialog(IDD_PROGRESS);
+                mThreadUpdateCategories.setState(ThreadUpdateCategories.STATE_DONE);
+                Toast.makeText(getApplicationContext(), "Task is finished: "+rsp, Toast.LENGTH_LONG).show();
+            //}
+        }
+    };  
+	
 	// Menu
 	 @Override
 	    public boolean onOptionsItemSelected(MenuItem item) {
 	        CharSequence message;
 	        switch (item.getItemId()) {
 	            case IDM_UPDATE_CATEGORIES:
-	            	message = "!!!";
-	            	Toast toast = Toast.makeText(this, message, Toast.LENGTH_SHORT);
+	            	
+	            	
+	            	//mProgressDialog = new ProgressDialog(ProgressDialogActivity.this);
+	                //mProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+	                //progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+	                //mProgressDialog.setMessage("Loading...");
+	                mThreadUpdateCategories = new ThreadUpdateCategories(handler);
+	                mThreadUpdateCategories.start();
+	                //return mProgressDialog;
+	            	
+	            	
+	            	/*
+	            	try {
+	    				dbHelper = new DBHelper(MainActivity.this);
+	    				dbHelper.insertCategory(1, -1, "перва€", "expense");
+	    				dbHelper.insertCategory(2, 1, "втора€", "expense");
+	    				dbHelper.insertCategory(3, 1, "3-€", "expense");
+	    				dbHelper.insertCategory(7, 1, "7-€", "expense");
+	    				dbHelper.close();
+	    				}
+	    				catch (Exception e) {
+	    					Toast toast = Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT);
+	    					toast.show();
+	    				}
+	            	*/
+	            	
+	            	//Toast toast = Toast.makeText(this, message, Toast.LENGTH_SHORT);
 	    	        //toast.setGravity(Gravity.CENTER, 0, 0);
-	    	        toast.show();
+	    	        //toast.show();
 	                break;
 	            case IDM_KEY_SYNC:
 	            	showDialog(KEY_DIALOG_ID);

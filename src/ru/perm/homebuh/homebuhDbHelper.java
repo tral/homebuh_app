@@ -20,16 +20,25 @@ import android.database.sqlite.SQLiteOpenHelper;
 			cv.put("parent_id", parent_id);
 		}
 		cv.put("name", name);
-		cv.put("pe", pe);
+		if (pe != "-1") {
+			cv.put("pe", pe);
+		}
 		long rowID = db.insert("category", null, cv);
 		return rowID;
     			
     }
     
+    // Удаляет все категории
+    public long deleteCategories() {
+    	SQLiteDatabase db = this.getWritableDatabase();
+		long delCount  = db.delete("category", null, null);
+		return delCount;
+    }
+    
     @Override
     public void onCreate(SQLiteDatabase db) {
       //Log.d(LOG_TAG, "--- onCreate database ---");
-      // создаем таблицу с полями
+      
       db.execSQL("create table category ("
           + "_id integer primary key," 
           + "name text,"
@@ -37,13 +46,34 @@ import android.database.sqlite.SQLiteOpenHelper;
           + "pe text"
           + ");");
 
+      db.execSQL("create table data_ ("
+              + "_id integer primary key autoincrement," 
+              + "date_ text,"
+              + "enter_time text,"
+              + "cat_id integer, "
+              + "val integer, "
+              + "comment text"
+              + ");");
+      
+      ContentValues cv = new ContentValues();
+      
+      // test del !!!
+      /*
+      cv.put("_id", 1);
+      cv.put("date_", "---");
+      cv.put("enter_time", "---");
+      cv.put("comment", "---");
+      cv.put("cat_id", 1);
+      cv.put("val", 1);
+      db.insert("data_", null, cv);
+  */    
       // секретный ключ синхронизации
       db.execSQL("create table keys ("
               + "_id integer primary key," 
               + "key_val text"
               + ");");
       
-      ContentValues cv = new ContentValues();
+      
       
       // Договорились, что ключ хранится в таблице с _id=1
       cv.put("_id", 1);

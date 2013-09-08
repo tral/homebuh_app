@@ -2,6 +2,10 @@ package ru.perm.homebuh;
 
 import java.util.Calendar;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
@@ -75,11 +79,13 @@ implements CompoundButton.OnCheckedChangeListener//, CompoundButton.
     
     // Database
     DBHelper dbHelper;
-    SimpleCursorAdapter scAdapter;
+    SimpleCursorAdapter sca;
     
     // Categories 
     Spinner spn1;
     Spinner spn2;
+    
+    Cursor Cat1Cursor;
     
     // Установит лейбл на кнопке с датой
     private void setLabelOnDateButton() {
@@ -125,7 +131,7 @@ implements CompoundButton.OnCheckedChangeListener//, CompoundButton.
         dbHelper = new DBHelper(this);
         
     	// создаем объект для данных
-		ContentValues cv = new ContentValues();
+		//ContentValues cv = new ContentValues();
 
 		// подключаемся к БД
 		SQLiteDatabase db = dbHelper.getWritableDatabase();
@@ -141,9 +147,9 @@ implements CompoundButton.OnCheckedChangeListener//, CompoundButton.
 	    String[] queryCols=new String[]{"_id", "name"};
 	    String[] adapterCols=new String[]{"name"};
 	    int[] adapterRowViews=new int[]{android.R.id.text1};
-	    Cursor mycursor=db.query(true,"category", queryCols,null,null,null,null,null,null);
+	    Cat1Cursor=db.query(true,"category", queryCols,null,null,null,null,null,null);
 	    //this.startManagingCursor(mycursor);
-	    SimpleCursorAdapter sca=new SimpleCursorAdapter(this, android.R.layout.simple_spinner_item, mycursor, adapterCols, adapterRowViews,0);
+	    sca=new SimpleCursorAdapter(this, android.R.layout.simple_spinner_item, Cat1Cursor, adapterCols, adapterRowViews,0);
 	    sca.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 	    spn1.setAdapter(sca);
         
@@ -299,7 +305,60 @@ implements CompoundButton.OnCheckedChangeListener//, CompoundButton.
           //  if (total >= 100){
             //    dismissDialog(IDD_PROGRESS);
                 mThreadUpdateCategories.setState(ThreadUpdateCategories.STATE_DONE);
-                Toast.makeText(getApplicationContext(), "Task is finished: "+rsp, Toast.LENGTH_LONG).show();
+                //Toast.makeText(getApplicationContext(), "Task is finished: "+rsp, Toast.LENGTH_LONG).show();
+                
+                long lInsertedRows = 0;
+                long lastInsertId;
+                
+                try {
+					JSONObject jObject = new JSONObject(rsp);
+				//	String aJsonString = jObject.getString("message");
+					JSONArray jArray = jObject.getJSONArray("cats");
+					
+					dbHelper = new DBHelper(MainActivity.this);
+					dbHelper.deleteCategories();
+					for (int i=0; i < jArray.length(); i++)
+					{
+					    
+					        JSONObject oneObject = jArray.getJSONObject(i);
+					        // Pulling items from the array
+					        String json_id = oneObject.getString("id");
+					        String json_name = oneObject.getString("name");
+					        String json_parent_id = oneObject.getString("parent_id");
+					        String json_pe = oneObject.getString("pe");
+					        
+					        
+					        try {
+			    				
+					        	lastInsertId = dbHelper.insertCategory(Integer.parseInt(json_id), Integer.parseInt(json_parent_id), json_name, json_pe);
+					        	if (lastInsertId > 0) {
+					        		lInsertedRows ++;
+			    				}
+			    				
+			    			}
+			    				catch (Exception e) {
+			    					Toast toast = Toast.makeText(getApplicationContext(), "Database Exception" + e.getMessage(), Toast.LENGTH_SHORT);
+			    					toast.show();
+			    			}
+    
+					    
+					}
+					// Как же его обновить?
+					//Cat1Cursor.requery();
+					//sca.notifyDataSetChanged();
+					//sca.changeCursor(Cat1Cursor);
+					
+					dbHelper.close();
+					
+				} catch (JSONException e) {
+					Toast.makeText(getApplicationContext(), "JSON Exception: "+e.getMessage(), Toast.LENGTH_SHORT).show();
+				}
+                
+                Toast.makeText(getApplicationContext(), "Вставлено " + lInsertedRows + " записей", Toast.LENGTH_SHORT).show();
+                
+                
+                
+                
             //}
         }
     };  
@@ -311,15 +370,25 @@ implements CompoundButton.OnCheckedChangeListener//, CompoundButton.
 	        switch (item.getItemId()) {
 	            case IDM_UPDATE_CATEGORIES:
 	            	
-	            	
-	            	//mProgressDialog = new ProgressDialog(ProgressDialogActivity.this);
-	                //mProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-	                //progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-	                //mProgressDialog.setMessage("Loading...");
-	                mThreadUpdateCategories = new ThreadUpdateCategories(handler);
-	                mThreadUpdateCategories.start();
+	            	// Даем обновлять категории только если нет несинхронизированных расходов
+
+	            	dbHelper = new DBHelper(this);
+	         		SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+	         		Cursor tmp = db.query(true,"data_", null,null,null,null,null,null,null);
+	         	   
+	         		if (tmp.getCount()>0 ) {
+	         			Toast toast = Toast.makeText(this, "Сначала синхронизируйте расходы!", Toast.LENGTH_SHORT);
+						toast.show();     
+					} else {
+						mThreadUpdateCategories = new ThreadUpdateCategories(handler);
+					    mThreadUpdateCategories.start();
+					}
+	         	    
+	         		tmp.close();
+	         		dbHelper.close();
+	                
 	                //return mProgressDialog;
-	            	
 	            	
 	            	/*
 	            	try {
@@ -420,48 +489,6 @@ implements CompoundButton.OnCheckedChangeListener//, CompoundButton.
         //Intent intent = new Intent(this, DisplayMessageActivity.class);
         EditText editText = (EditText) findViewById(R.id.editText1);
         String message = editText.getText().toString();
-        
-        //TextView tv = (TextView)findViewById(R.id.textView1);
-        
-        //intent.putExtra(EXTRA_MESSAGE, message);
-        //startActivity(intent);
-        
-        
-        /*
-        String result = ";(";
-        String url = "http://beta.finefin.ru/api/auth/";
-        
-        try {
-            result = HttpConnect.sendGet(url);
-           } catch (Exception e) {
-            result = e.toString(); 
-           }
-        
-        */
-        /*
-        
-        HttpClient httpClient = new DefaultHttpClient();
-        HttpGet httpGet = new HttpGet(url);
-        try {
-         HttpResponse response = httpClient.execute(httpGet);
-         if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-          BufferedReader reader = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
-          StringBuilder sb = new StringBuilder();
-          String line = null;
-          while ((line = reader.readLine()) != null) {
-           sb.append(line + System.getProperty("line.separator"));
-          }
-          String answer = sb.toString();
-          result = answer;
-         }
-        }
-        catch (Exception e) {
-         result = e.toString() +" Message:" +e.getMessage(); 
-        }
-        */
-        //tv.setText(result);
-        
-        
     }
 
 

@@ -29,33 +29,37 @@ public class ThreadUpdateCategories extends Thread {
         mState = STATE_RUNNING;   
         mTotal = 0;
         
-        String result = ";(";
-        String url = "http://beta.finefin.ru/api/auth/";
-        HttpClient httpClient = new DefaultHttpClient();
-        HttpGet httpGet = new HttpGet(url);
-        try {
-         HttpResponse response = httpClient.execute(httpGet);
-         if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-          BufferedReader reader = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
-          StringBuilder sb = new StringBuilder();
-          String line = null;
-          while ((line = reader.readLine()) != null) {
-           sb.append(line + System.getProperty("line.separator"));
-          }
-          String answer = sb.toString();
-          result = answer;
-         }
+        if (mState == STATE_RUNNING) {
+	        
+	        String result = ";(";
+	        String url = "http://hb.perm.ru/android/getcategories";
+	        HttpClient httpClient = new DefaultHttpClient();
+	        HttpGet httpGet = new HttpGet(url);
+	        try {
+	         HttpResponse response = httpClient.execute(httpGet);
+	         if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+	          BufferedReader reader = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
+	          StringBuilder sb = new StringBuilder();
+	          String line = null;
+	          while ((line = reader.readLine()) != null) {
+	           sb.append(line + System.getProperty("line.separator"));
+	          }
+	          String answer = sb.toString();
+	          result = answer;
+	         }
+	        }
+	        catch (Exception e) {
+	         result = e.toString() +" Message:" +e.getMessage(); 
+	        }
+	        
+	        Message msg = mHandler.obtainMessage();
+	        Bundle b = new Bundle();
+	        //b.putInt("total", mTotal);
+	        b.putString("rsp", result);
+	        msg.setData(b);
+	        mHandler.sendMessage(msg);
+	        
         }
-        catch (Exception e) {
-         result = e.toString() +" Message:" +e.getMessage(); 
-        }
-        
-        Message msg = mHandler.obtainMessage();
-        Bundle b = new Bundle();
-        //b.putInt("total", mTotal);
-        b.putString("rsp", result);
-        msg.setData(b);
-        mHandler.sendMessage(msg);
         /*
         while (mState == STATE_RUNNING) {
             try {

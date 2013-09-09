@@ -44,19 +44,31 @@ public class ThreadSyncExpenses extends Thread {
         Boolean lWasError = false;
         int rowsInserted = 0;
         
+        
         if (mState == STATE_RUNNING) {
 
         	String result = "";
+        	String tmp = "";
         	
         	try {
         		for (int k=0; k<=mVal.length-1 ;k++) {
         			if (mVal[k]!= null) {
-        				this.Go(mDate[k], mEt[k],  mComment[k], mCat[k], mVal[k]);
+        				tmp = this.Go(mDate[k], mEt[k],  mComment[k], mCat[k], mVal[k]);
+        				
+       					if (!tmp.equalsIgnoreCase("ok")) {
+        						result = tmp;
+        						break;
+        				}
+        				
         				rowsInserted++;
         			} else break;
         		}
         		
-        		result = Integer.toString(rowsInserted);
+				if (!tmp.equalsIgnoreCase("ok")) { 
+					lWasError = true;
+				} else {
+					result = Integer.toString(rowsInserted);
+				}
         		
         	}
 	        catch (Exception e) {
@@ -76,9 +88,11 @@ public class ThreadSyncExpenses extends Thread {
     }
     
     
-    public void Go(String p_date, String p_et, String p_comment, String p_cat, String p_val) {
+    public String Go(String p_date, String p_et, String p_comment, String p_cat, String p_val) {
+    	
     	String url = "http://hb.perm.ru/android/saveexpense/key/"+mSecretKey;
-        
+    	String answer = "";
+    	
         try {
         HttpClient httpClient = new DefaultHttpClient();
         
@@ -103,17 +117,18 @@ public class ThreadSyncExpenses extends Thread {
           while ((line = reader.readLine()) != null) {
            sb.append(line + System.getProperty("line.separator"));
           }
-          String answer = sb.toString();
-        //  result = answer;
-      //    result = result.replaceAll("(\\r|\\n)", "");
-    //        if (result.equalsIgnoreCase("WRONG_SECRET_KEY")) {
-  //          	result="Неверный секретный ключ синхронизации!";
-//	          }
+          answer = sb.toString();
+          answer = answer.replaceAll("(\\r|\\n)", "");
+            if (answer.equalsIgnoreCase("WRONG_SECRET_KEY")) {
+            	answer="Неверный секретный ключ синхронизации!";
+	          }
          }
         }
         catch (Exception e) {
-         //result = e.toString() +" Message:" +e.getMessage();
+         answer = e.toString() +" Message:" +e.getMessage();
         }
+        
+       return answer;
     }
     
     

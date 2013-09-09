@@ -51,10 +51,10 @@ public class ThreadUpdateCategories extends Thread {
 	          String answer = sb.toString();
 	          result = answer;
 	          result = result.replaceAll("(\\r|\\n)", "");
-	            if (result.equalsIgnoreCase("WRONG_SECRET_KEY")) {
-	            	result="Неверный секретный ключ синхронизации!";
-		        	lWasError = true;
-		          }
+	          if (result.equalsIgnoreCase("WRONG_SECRET_KEY")) {
+	        	  result="Неверный секретный ключ синхронизации!";
+	        	  lWasError = true;
+	          }
 	         }
 	        }
 	        catch (Exception e) {

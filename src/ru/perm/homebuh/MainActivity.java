@@ -165,48 +165,51 @@ implements AdapterView.OnItemSelectedListener // For Categories (spinner)
         mSyncBtn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
             	
-            	showDialog(SYNC_PROGRESS_DIALOG_ID);
-            	
             	dbHelper = new DBHelper(MainActivity.this);
             	SQLiteDatabase db = dbHelper.getWritableDatabase();
             	Cursor mCur = db.query("data_", null, null, null, null, null, "_id");
             	 
-            	String[] s=new String[100];
-            	 
-            	String[] s_date = new String[100];
-            	String[] s_et = new String[100];
-            	String[] s_comment = new String[100];
-            	String[] s_cat = new String[100];
-            	String[] s_val = new String[100];
-            	 
-            	int i=0;
-            	 
-            	if (mCur.moveToFirst()) {
-
-            		int dateColIndex = mCur.getColumnIndex("date_");
- 	    	        int etColIndex = mCur.getColumnIndex("enter_time");
- 	    	        int commentColIndex = mCur.getColumnIndex("comment");
- 	    	        int catColIndex = mCur.getColumnIndex("cat_id");
- 	    	        int valColIndex = mCur.getColumnIndex("val");
- 	    	        
- 	    	        do {
- 	    	        	s_date[i] = mCur.getString(dateColIndex);
- 	    	        	s_et[i] = mCur.getString(etColIndex);
- 	    	        	s_comment[i] =mCur.getString(commentColIndex);
- 	    	        	s_cat[i]=Integer.toString(mCur.getInt(catColIndex));
- 	    	        	s_val[i]=Integer.toString(mCur.getInt(valColIndex));
- 	    	        	i++;
- 	    	        } while (mCur.moveToNext());
-            	 } 
-            	
-            	// 	Toast.makeText(MainActivity.this, s, Toast.LENGTH_SHORT).show();
-            	
-				mThreadSyncExpenses = new ThreadSyncExpenses(handlerSync);
-				mThreadSyncExpenses.setSecretKey(dbHelper.getSecretKey());
-				mThreadSyncExpenses.setVars(s_date, s_et, s_comment, s_cat, s_val);
-				mThreadSyncExpenses.setState(ThreadSyncExpenses.STATE_RUNNING);
-				mThreadSyncExpenses.start();
-            	
+            	if (mCur.getCount() < 1) {
+            		Toast.makeText(MainActivity.this, "Нет несинхронизированных расходов!", Toast.LENGTH_LONG).show();            		
+            	} else {
+            		
+            		showDialog(SYNC_PROGRESS_DIALOG_ID);
+            		
+	            	String[] s=new String[100];
+	            	 
+	            	String[] s_date = new String[100];
+	            	String[] s_et = new String[100];
+	            	String[] s_comment = new String[100];
+	            	String[] s_cat = new String[100];
+	            	String[] s_val = new String[100];
+	            	 
+	            	int i=0;
+	            	 
+	            	if (mCur.moveToFirst()) {
+	
+	            		int dateColIndex = mCur.getColumnIndex("date_");
+	 	    	        int etColIndex = mCur.getColumnIndex("enter_time");
+	 	    	        int commentColIndex = mCur.getColumnIndex("comment");
+	 	    	        int catColIndex = mCur.getColumnIndex("cat_id");
+	 	    	        int valColIndex = mCur.getColumnIndex("val");
+	 	    	        
+	 	    	        do {
+	 	    	        	s_date[i] = mCur.getString(dateColIndex);
+	 	    	        	s_et[i] = mCur.getString(etColIndex);
+	 	    	        	s_comment[i] =mCur.getString(commentColIndex);
+	 	    	        	s_cat[i]=Integer.toString(mCur.getInt(catColIndex));
+	 	    	        	s_val[i]=Integer.toString(mCur.getInt(valColIndex));
+	 	    	        	i++;
+	 	    	        } while (mCur.moveToNext());
+	            	 } 
+	            	
+					mThreadSyncExpenses = new ThreadSyncExpenses(handlerSync);
+					mThreadSyncExpenses.setSecretKey(dbHelper.getSecretKey());
+					mThreadSyncExpenses.setVars(s_date, s_et, s_comment, s_cat, s_val);
+					mThreadSyncExpenses.setState(ThreadSyncExpenses.STATE_RUNNING);
+					mThreadSyncExpenses.start();
+            	}
+				
 				mCur.close();
 	        	dbHelper.close();
             	

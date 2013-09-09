@@ -10,6 +10,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.database.Cursor;
@@ -54,6 +55,7 @@ implements CompoundButton.OnCheckedChangeListener//, CompoundButton.
     // Dialogs
     private static final int DATE_DIALOG_ID = 0;
     private final static int KEY_DIALOG_ID = 1;
+    private final static int CAT_PROGRESS_DIALOG_ID = 2;
 	
     // Menu
     public static final int IDM_UPDATE_CATEGORIES = 101;
@@ -67,8 +69,8 @@ implements CompoundButton.OnCheckedChangeListener//, CompoundButton.
     // Categories 
     Spinner spn1;
     Spinner spn2;
-    
     Cursor Cat1Cursor;
+    ProgressDialog mCatProgressDialog;
     
     // Установит лейбл на кнопке с датой
     private void setLabelOnDateButton() {
@@ -182,6 +184,18 @@ implements CompoundButton.OnCheckedChangeListener//, CompoundButton.
     @Override
     protected Dialog onCreateDialog(int id) {
         switch (id) {
+        case CAT_PROGRESS_DIALOG_ID:
+        	  mCatProgressDialog = new ProgressDialog(MainActivity.this);
+        	  //mCatProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        	  mCatProgressDialog.setCanceledOnTouchOutside(false);
+        	  mCatProgressDialog.setCancelable(false);
+        	  mCatProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        	  mCatProgressDialog.setMessage("Загрузка категорий...");
+        	  
+        	
+        	  
+            return mCatProgressDialog;
+              
         case DATE_DIALOG_ID:
             return new DatePickerDialog(this,
                         mDateSetListener,
@@ -264,7 +278,7 @@ implements CompoundButton.OnCheckedChangeListener//, CompoundButton.
             Boolean lWasError = msg.getData().getBoolean("wasError");
             
             mThreadUpdateCategories.setState(ThreadUpdateCategories.STATE_DONE);
-
+            
             if (lWasError) {
             	Toast.makeText(getApplicationContext(), "Ошибка обновления категорий: " + rsp, Toast.LENGTH_LONG).show();
             } else {
@@ -288,7 +302,6 @@ implements CompoundButton.OnCheckedChangeListener//, CompoundButton.
 					        String json_name = oneObject.getString("name");
 					        String json_parent_id = oneObject.getString("parent_id");
 					        String json_pe = oneObject.getString("pe");
-					        
 					        
 					        try {
 			    				
@@ -315,11 +328,12 @@ implements CompoundButton.OnCheckedChangeListener//, CompoundButton.
 					Toast.makeText(getApplicationContext(), "JSON Exception: "+e.getMessage(), Toast.LENGTH_SHORT).show();
 				}
                 
+                
                 Toast.makeText(getApplicationContext(), "Вставлено " + lInsertedRows + " записей", Toast.LENGTH_SHORT).show();
                 
             } // was Inet Error ?
                 
-                
+            dismissDialog(CAT_PROGRESS_DIALOG_ID);
         }
     };  
 	
@@ -331,21 +345,28 @@ implements CompoundButton.OnCheckedChangeListener//, CompoundButton.
 	            case IDM_UPDATE_CATEGORIES:
 	            	
 	            	// Даем обновлять категории только если нет несинхронизированных расходов
-	            	dbHelper = new DBHelper(this);
-	         		SQLiteDatabase db = dbHelper.getWritableDatabase();
-	         		Cursor tmp = db.query(true,"data_", null,null,null,null,null,null,null);
-	         	   
-	         		if (tmp.getCount()>0 ) {
-	         			Toast toast = Toast.makeText(this, "Сначала синхронизируйте расходы!", Toast.LENGTH_SHORT);
-						toast.show();     
-					} else {
-						// Запускаем новый поток для вытягивания категорий с удаленного сервера
-						mThreadUpdateCategories = new ThreadUpdateCategories(handler);
-					    mThreadUpdateCategories.start();
-					}
-	         	    
-	         		tmp.close();
-	         		dbHelper.close();
+	              	dbHelper = new DBHelper(this);
+	           		SQLiteDatabase db = dbHelper.getWritableDatabase();
+	           		Cursor tmp = db.query(true,"data_", null,null,null,null,null,null,null);
+	           	   
+	           		if (tmp.getCount()>0 ) {
+	           			Toast toast = Toast.makeText(this, "Сначала синхронизируйте расходы!", Toast.LENGTH_SHORT);
+	    				toast.show();     
+	    				} else {
+	    					showDialog(CAT_PROGRESS_DIALOG_ID);
+	    					// Запускаем новый поток для вытягивания категорий с удаленного сервера
+	    					mThreadUpdateCategories = new ThreadUpdateCategories(handler);
+	    					mThreadUpdateCategories.setSecretKey(dbHelper.getSecretKey());
+	    					mThreadUpdateCategories.setState(ThreadUpdateCategories.STATE_RUNNING);
+	    				    mThreadUpdateCategories.start();
+	    				}
+	           	    
+	           		tmp.close();
+	           		dbHelper.close();
+	            	
+	            	
+	            	
+	            	
 	                
 	            	//Toast toast = Toast.makeText(this, message, Toast.LENGTH_SHORT);
 	    	        //toast.setGravity(Gravity.CENTER, 0, 0);

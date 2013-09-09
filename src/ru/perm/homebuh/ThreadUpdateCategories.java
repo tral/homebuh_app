@@ -19,7 +19,8 @@ public class ThreadUpdateCategories extends Thread {
     final static int STATE_DONE = 0;
     final static int STATE_RUNNING = 1;
     int mState;
-    int mTotal;
+
+    String mSecretKey;
    
     ThreadUpdateCategories(Handler h) {
         mHandler = h;
@@ -27,7 +28,7 @@ public class ThreadUpdateCategories extends Thread {
    
     public void run() {
         mState = STATE_RUNNING;   
-        mTotal = 0;
+        
         Boolean lWasError;
         
         if (mState == STATE_RUNNING) {
@@ -35,7 +36,7 @@ public class ThreadUpdateCategories extends Thread {
         	lWasError = false;
         	
 	        String result = ";(";
-	        String url = "http://hb.perm.ru/android/getcategories";
+	        String url = "http://hb.perm.ru/android/getcategories/key/"+mSecretKey;
 	        HttpClient httpClient = new DefaultHttpClient();
 	        HttpGet httpGet = new HttpGet(url);
 	        try {
@@ -49,6 +50,11 @@ public class ThreadUpdateCategories extends Thread {
 	          }
 	          String answer = sb.toString();
 	          result = answer;
+	          result = result.replaceAll("(\\r|\\n)", "");
+	            if (result.equalsIgnoreCase("WRONG_SECRET_KEY")) {
+	            	result="Неверный секретный ключ синхронизации!";
+		        	lWasError = true;
+		          }
 	         }
 	        }
 	        catch (Exception e) {
@@ -85,4 +91,9 @@ public class ThreadUpdateCategories extends Thread {
     public void setState(int state) {
         mState = state;
     }
+    
+    public void setSecretKey(String key) {
+        mSecretKey = key;
+    }
+    
 }

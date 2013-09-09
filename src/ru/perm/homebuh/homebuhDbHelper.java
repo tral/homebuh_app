@@ -2,6 +2,7 @@ package ru.perm.homebuh;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
@@ -33,6 +34,19 @@ import android.database.sqlite.SQLiteOpenHelper;
     	SQLiteDatabase db = this.getWritableDatabase();
 		long delCount  = db.delete("category", null, null);
 		return delCount;
+    }
+    
+    public String getSecretKey() {
+    	SQLiteDatabase db = this.getWritableDatabase();
+    	Cursor c = db.query("keys", null, "_id=1", null, null, null, null);
+    	
+    	if (c.moveToFirst()) {
+            int idx = c.getColumnIndex("key_val");
+            String key = c.getString(idx);
+            return  key;
+		}
+    	
+    	return "";
     }
     
     @Override

@@ -17,11 +17,11 @@ import android.database.sqlite.SQLiteOpenHelper;
     	SQLiteDatabase db = this.getWritableDatabase();
 		ContentValues cv = new ContentValues();
 		cv.put("_id", _id);
-		if (parent_id>0) {
+		if (parent_id > 0) {
 			cv.put("parent_id", parent_id);
 		}
 		cv.put("name", name);
-		if (pe != "-1") {
+		if (!pe.equalsIgnoreCase("-1")) {
 			cv.put("pe", pe);
 		}
 		long rowID = db.insert("category", null, cv);

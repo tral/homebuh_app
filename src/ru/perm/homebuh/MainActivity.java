@@ -64,12 +64,14 @@ implements CompoundButton.OnCheckedChangeListener//, CompoundButton.
     
     // Database
     DBHelper dbHelper;
-    SimpleCursorAdapter sca;
+    SimpleCursorAdapter sca1;
+    SimpleCursorAdapter sca2;
     
     // Categories 
     Spinner spn1;
     Spinner spn2;
     Cursor Cat1Cursor;
+    Cursor Cat2Cursor;
     ProgressDialog mCatProgressDialog;
     
     // Установит лейбл на кнопке с датой
@@ -110,22 +112,9 @@ implements CompoundButton.OnCheckedChangeListener//, CompoundButton.
         spn1.setOnItemSelectedListener(this);
         spn2 = (Spinner)findViewById(R.id.spinnerCat2);
         spn2.setOnItemSelectedListener(this);
-        
-        // создаем объект для создания и управления версиями БД и подключаемся к БД
-        dbHelper = new DBHelper(this);
-		SQLiteDatabase db = dbHelper.getWritableDatabase();
-        
-	    String[] queryCols=new String[]{"_id", "name"};
-	    String[] adapterCols=new String[]{"name"};
-	    int[] adapterRowViews=new int[]{android.R.id.text1};
-	    Cat1Cursor=db.query(true,"category", queryCols,null,null,null,null,null,null);
-	    //this.startManagingCursor(mycursor);
-	    sca=new SimpleCursorAdapter(this, android.R.layout.simple_spinner_item, Cat1Cursor, adapterCols, adapterRowViews,0);
-	    sca.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-	    spn1.setAdapter(sca);
-        
-		// закрываем подключение к БД
-		dbHelper.close();
+        this.loadCategoriesLevel1();
+   
+
         
 		
 		
@@ -165,17 +154,54 @@ implements CompoundButton.OnCheckedChangeListener//, CompoundButton.
 	
 	}
 	
+	protected void loadCategoriesLevel1() {
+        dbHelper = new DBHelper(this);
 
-	// Categories 1
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+	    String[] queryCols=new String[]{"_id", "name"};
+	    String[] adapterCols=new String[]{"name"};
+	    int[] adapterRowViews=new int[]{android.R.id.text1};
+	    Cat1Cursor=db.query(true,"category", queryCols, "parent_id is null" ,null,null,null,"name", null);
+	    //this.startManagingCursor(Cat1Cursor); падает при свитче задач
+	    sca1=new SimpleCursorAdapter(this, android.R.layout.simple_spinner_item, Cat1Cursor, adapterCols, adapterRowViews,0);
+	    sca1.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+	    spn1.setAdapter(sca1);
+        
+		dbHelper.close();
+	}
+
+	protected void loadCategoriesLevel2(long parent_id) {
+        dbHelper = new DBHelper(this);
+
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+	    String[] queryCols=new String[]{"_id", "name"};
+	    String[] adapterCols=new String[]{"name"};
+	    int[] adapterRowViews=new int[]{android.R.id.text1};
+	    Cat2Cursor=db.query(true, "category", queryCols, "parent_id = " + parent_id ,null,null,null,"name", null);
+	    //this.startManagingCursor(Cat1Cursor); падает при свитче задач
+	    sca2=new SimpleCursorAdapter(this, android.R.layout.simple_spinner_item, Cat2Cursor, adapterCols, adapterRowViews,0);
+	    sca2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+	    spn2.setAdapter(sca2);
+        
+		dbHelper.close();
+	}
+	
+	// Categories 1 выбор элемента
     public void onItemSelected(
             AdapterView<?> parent, View v, int position, long id) {
     	
-    	Toast toast = Toast.makeText(this, id + " !", Toast.LENGTH_SHORT);
-        //toast.setGravity(Gravity.CENTER, 0, 0);
-        toast.show();
+    	switch (parent.getId()) {
+    	case R.id.spinnerCat1 :
+    		this.loadCategoriesLevel2(id);
+    		Toast.makeText(this, "id = " + id, Toast.LENGTH_SHORT).show();
+    		break;
+    	case R.id.spinnerCat2 :
+    		Toast.makeText(this, "id = " + id, Toast.LENGTH_SHORT).show();
+    		break;
+    	}
     }
 
-    // Categories 1        
+    // Categories 1 - ничего не выбрано        
     public void onNothingSelected(AdapterView<?> parent) {
             //mLabel.setText("");
     }
@@ -312,8 +338,7 @@ implements CompoundButton.OnCheckedChangeListener//, CompoundButton.
 			    				
 			    			}
 			    				catch (Exception e) {
-			    					Toast toast = Toast.makeText(getApplicationContext(), "Database Exception" + e.getMessage(), Toast.LENGTH_SHORT);
-			    					toast.show();
+			    					Toast.makeText(getApplicationContext(), "Database Exception" + e.getMessage(), Toast.LENGTH_SHORT).show();
 			    			}
     
 					}
@@ -321,6 +346,9 @@ implements CompoundButton.OnCheckedChangeListener//, CompoundButton.
 					//Cat1Cursor.requery();
 					//sca.notifyDataSetChanged();
 					//sca.changeCursor(Cat1Cursor);
+					MainActivity.this.loadCategoriesLevel1();
+					//spn1.refreshDrawableState();
+					
 					
 					dbHelper.close();
 					
@@ -329,7 +357,7 @@ implements CompoundButton.OnCheckedChangeListener//, CompoundButton.
 				}
                 
                 
-                Toast.makeText(getApplicationContext(), "Вставлено " + lInsertedRows + " записей", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Категории обновлены, загружено " + lInsertedRows + " записей", Toast.LENGTH_SHORT).show();
                 
             } // was Inet Error ?
                 
@@ -350,23 +378,21 @@ implements CompoundButton.OnCheckedChangeListener//, CompoundButton.
 	           		Cursor tmp = db.query(true,"data_", null,null,null,null,null,null,null);
 	           	   
 	           		if (tmp.getCount()>0 ) {
-	           			Toast toast = Toast.makeText(this, "Сначала синхронизируйте расходы!", Toast.LENGTH_SHORT);
-	    				toast.show();     
-	    				} else {
-	    					showDialog(CAT_PROGRESS_DIALOG_ID);
-	    					// Запускаем новый поток для вытягивания категорий с удаленного сервера
-	    					mThreadUpdateCategories = new ThreadUpdateCategories(handler);
-	    					mThreadUpdateCategories.setSecretKey(dbHelper.getSecretKey());
-	    					mThreadUpdateCategories.setState(ThreadUpdateCategories.STATE_RUNNING);
-	    				    mThreadUpdateCategories.start();
-	    				}
+	           			Toast.makeText(this, "Сначала синхронизируйте расходы!", Toast.LENGTH_SHORT).show();
+    				} else {
+    					showDialog(CAT_PROGRESS_DIALOG_ID);
+    					// Запускаем новый поток для вытягивания категорий с удаленного сервера
+    					mThreadUpdateCategories = new ThreadUpdateCategories(handler);
+    					mThreadUpdateCategories.setSecretKey(dbHelper.getSecretKey());
+    					mThreadUpdateCategories.setState(ThreadUpdateCategories.STATE_RUNNING);
+    				    mThreadUpdateCategories.start();
+    				}
 	           	    
 	           		tmp.close();
 	           		dbHelper.close();
 	            	
-	            	//Toast toast = Toast.makeText(this, message, Toast.LENGTH_SHORT);
-	    	        //toast.setGravity(Gravity.CENTER, 0, 0);
-	    	        //toast.show();
+	            	//Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+
 	                break;
 	            case IDM_KEY_SYNC:
 	            	showDialog(KEY_DIALOG_ID);
@@ -383,8 +409,7 @@ implements CompoundButton.OnCheckedChangeListener//, CompoundButton.
 	@Override
 	public void onCheckedChanged(CompoundButton buttonview, boolean isChecked) {
 		
-		Toast.makeText(getApplicationContext(), "Color: "
-                , Toast.LENGTH_SHORT).show();
+		Toast.makeText(getApplicationContext(), "Color: ", Toast.LENGTH_SHORT).show();
 		
 	//	EditText editText = (EditText) findViewById(R.id.editText1);
 		//String message = editText.getText().toString();

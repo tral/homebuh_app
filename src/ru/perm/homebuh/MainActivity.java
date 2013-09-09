@@ -364,10 +364,6 @@ implements CompoundButton.OnCheckedChangeListener//, CompoundButton.
 	           		tmp.close();
 	           		dbHelper.close();
 	            	
-	            	
-	            	
-	            	
-	                
 	            	//Toast toast = Toast.makeText(this, message, Toast.LENGTH_SHORT);
 	    	        //toast.setGravity(Gravity.CENTER, 0, 0);
 	    	        //toast.show();

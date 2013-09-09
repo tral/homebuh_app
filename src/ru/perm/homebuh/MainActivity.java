@@ -1,6 +1,7 @@
 package ru.perm.homebuh;
 
 import java.util.Calendar;
+import java.util.Vector;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -25,7 +26,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.SimpleCursorAdapter;
@@ -39,6 +39,7 @@ implements AdapterView.OnItemSelectedListener // For Categories (spinner)
 {
     
 	ThreadUpdateCategories mThreadUpdateCategories;
+	ThreadSyncExpenses mThreadSyncExpenses;
 	
 	//Date
     private Button mPickDate;
@@ -50,7 +51,8 @@ implements AdapterView.OnItemSelectedListener // For Categories (spinner)
     private static final int DATE_DIALOG_ID = 0;
     private final static int KEY_DIALOG_ID = 1;
     private final static int CAT_PROGRESS_DIALOG_ID = 2;
-	
+    private final static int SYNC_PROGRESS_DIALOG_ID = 3;
+    
     // Menu
     public static final int IDM_UPDATE_CATEGORIES = 101;
     public static final int IDM_KEY_SYNC = 102;
@@ -69,6 +71,7 @@ implements AdapterView.OnItemSelectedListener // For Categories (spinner)
     Cursor Cat1Cursor;
     Cursor Cat2Cursor;
     ProgressDialog mCatProgressDialog;
+    ProgressDialog mSyncProgressDialog;
     
     // Buttons
     Button mSaveBtn;
@@ -136,10 +139,10 @@ implements AdapterView.OnItemSelectedListener // For Categories (spinner)
             	}
             	
             	if (lSumVal < 1) 
-            		Toast.makeText(MainActivity.this, "Введите сумму!", Toast.LENGTH_SHORT).show();
+            		Toast.makeText(MainActivity.this, "Введите сумму!", Toast.LENGTH_LONG).show();
             	 else 
             		if (spn2.getCount() < 1) 
-            			Toast.makeText(MainActivity.this, "Загрузите категории!", Toast.LENGTH_SHORT).show();
+            			Toast.makeText(MainActivity.this, "Загрузите категории!", Toast.LENGTH_LONG).show();
             		
             	//Toast.makeText(MainActivity.this, "!"+spn2.getCount(), Toast.LENGTH_SHORT).show();
             	
@@ -148,11 +151,13 @@ implements AdapterView.OnItemSelectedListener // For Categories (spinner)
             	long lastInsertId = dbHelper.insertExpense(spn2.getSelectedItemId(), lSumVal, (String)mPickDate.getText(), mComment.getText().toString());
 
 	        	if (lastInsertId > 0) {
-	        		Toast.makeText(MainActivity.this, "сохранено, id="+lastInsertId, Toast.LENGTH_SHORT).show();
+	        		Toast.makeText(MainActivity.this, "Cохранено", Toast.LENGTH_SHORT).show();
 				}
 	        	
 	        	dbHelper.close();
-            	
+	        	mSumVal.setText("");
+	        	mComment.setText("");
+	        	mSumVal.requestFocus();
             }
         });
         
@@ -160,38 +165,49 @@ implements AdapterView.OnItemSelectedListener // For Categories (spinner)
         mSyncBtn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
             	
-            	
+            	showDialog(SYNC_PROGRESS_DIALOG_ID);
             	
             	dbHelper = new DBHelper(MainActivity.this);
             	SQLiteDatabase db = dbHelper.getWritableDatabase();
-            	Cursor c = db.query("data_", null, null, null, null, null, "_id");
-            	
-            	 if (c.moveToFirst()) {
+            	Cursor mCur = db.query("data_", null, null, null, null, null, "_id");
+            	 
+            	String[] s=new String[100];
+            	 
+            	String[] s_date = new String[100];
+            	String[] s_et = new String[100];
+            	String[] s_comment = new String[100];
+            	String[] s_cat = new String[100];
+            	String[] s_val = new String[100];
+            	 
+            	int i=0;
+            	 
+            	if (mCur.moveToFirst()) {
 
-	    	        int dateColIndex = c.getColumnIndex("date_");
-	    	        int etColIndex = c.getColumnIndex("enter_time");
-	    	        int commentColIndex = c.getColumnIndex("comment");
-	    	        int catColIndex = c.getColumnIndex("cat_id");
-	    	        int valColIndex = c.getColumnIndex("val");
-	
-	    	        String s;
-	    	        
-	    	        do {
-	    	          // получаем значения по номерам столбцов и пишем все в лог
-	    	        	s = "" + c.getString(dateColIndex) + " " + c.getString(etColIndex) + " " + 
-	    	        			 c.getString(commentColIndex) + " "  +c.getInt(catColIndex) + " "+c.getInt(valColIndex);
-	    	          /*Log.d(LOG_TAG,
-	    	              "ID = " + c.getInt(idColIndex) + 
-	    	              ", name = " + c.getString(nameColIndex) + 
-	    	              ", email = " + c.getString(emailColIndex));*/
-	    	          // переход на следующую строку 
-	    	          // а если следующей нет (текущая - последняя), то false - выходим из цикла
-	    	        } while (c.moveToNext());
-	    	        
-	    	        Toast.makeText(MainActivity.this, s, Toast.LENGTH_SHORT).show();
+            		int dateColIndex = mCur.getColumnIndex("date_");
+ 	    	        int etColIndex = mCur.getColumnIndex("enter_time");
+ 	    	        int commentColIndex = mCur.getColumnIndex("comment");
+ 	    	        int catColIndex = mCur.getColumnIndex("cat_id");
+ 	    	        int valColIndex = mCur.getColumnIndex("val");
+ 	    	        
+ 	    	        do {
+ 	    	        	s_date[i] = mCur.getString(dateColIndex);
+ 	    	        	s_et[i] = mCur.getString(etColIndex);
+ 	    	        	s_comment[i] =mCur.getString(commentColIndex);
+ 	    	        	s_cat[i]=Integer.toString(mCur.getInt(catColIndex));
+ 	    	        	s_val[i]=Integer.toString(mCur.getInt(valColIndex));
+ 	    	        	i++;
+ 	    	        } while (mCur.moveToNext());
             	 } 
             	
-            	c.close();
+            	// 	Toast.makeText(MainActivity.this, s, Toast.LENGTH_SHORT).show();
+            	
+				mThreadSyncExpenses = new ThreadSyncExpenses(handlerSync);
+				mThreadSyncExpenses.setSecretKey(dbHelper.getSecretKey());
+				mThreadSyncExpenses.setVars(s_date, s_et, s_comment, s_cat, s_val);
+				mThreadSyncExpenses.setState(ThreadSyncExpenses.STATE_RUNNING);
+				mThreadSyncExpenses.start();
+            	
+				mCur.close();
 	        	dbHelper.close();
             	
             }
@@ -263,10 +279,16 @@ implements AdapterView.OnItemSelectedListener // For Categories (spinner)
         	  mCatProgressDialog.setCancelable(false);
         	  mCatProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         	  mCatProgressDialog.setMessage("Загрузка категорий...");
+        	  return mCatProgressDialog;
         	  
-        	
-        	  
-            return mCatProgressDialog;
+        case SYNC_PROGRESS_DIALOG_ID:
+        	mSyncProgressDialog = new ProgressDialog(MainActivity.this);
+      	  //mCatProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        	mSyncProgressDialog.setCanceledOnTouchOutside(false);
+        	mSyncProgressDialog.setCancelable(false);
+        	mSyncProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        	mSyncProgressDialog.setMessage("Синхронизация расходов...");
+      	  return mSyncProgressDialog;
               
         case DATE_DIALOG_ID:
             return new DatePickerDialog(this,
@@ -367,7 +389,6 @@ implements AdapterView.OnItemSelectedListener // For Categories (spinner)
 					dbHelper.deleteCategories();
 					for (int i=0; i < jArray.length(); i++)
 					{
-					    
 					        JSONObject oneObject = jArray.getJSONObject(i);
 					        // Pulling items from the array
 					        String json_id = oneObject.getString("id");
@@ -384,22 +405,17 @@ implements AdapterView.OnItemSelectedListener // For Categories (spinner)
 			    				
 			    			}
 			    				catch (Exception e) {
-			    					Toast.makeText(getApplicationContext(), "Database Exception" + e.getMessage(), Toast.LENGTH_SHORT).show();
+			    					Toast.makeText(getApplicationContext(), "Database Exception" + e.getMessage(), Toast.LENGTH_LONG).show();
 			    			}
     
 					}
-					// Как же его обновить?
-					//Cat1Cursor.requery();
-					//sca.notifyDataSetChanged();
-					//sca.changeCursor(Cat1Cursor);
+
 					MainActivity.this.loadCategoriesLevel1();
-					//spn1.refreshDrawableState();
-					
 					
 					dbHelper.close();
 					
 				} catch (JSONException e) {
-					Toast.makeText(getApplicationContext(), "JSON Exception: "+e.getMessage(), Toast.LENGTH_SHORT).show();
+					Toast.makeText(getApplicationContext(), "JSON Exception: "+e.getMessage(), Toast.LENGTH_LONG).show();
 				}
                 
                 
@@ -411,6 +427,30 @@ implements AdapterView.OnItemSelectedListener // For Categories (spinner)
         }
     };  
 	
+
+    // Поток для синхронизации расходов
+    final Handler handlerSync = new Handler() {
+    	public void handleMessage(Message msg) {
+
+    		String rsp = msg.getData().getString("rsp");
+            Boolean lWasError = msg.getData().getBoolean("wasError");
+              
+            mThreadSyncExpenses.setState(ThreadUpdateCategories.STATE_DONE);
+              
+            if (lWasError) {
+            	Toast.makeText(getApplicationContext(), "Ошибка синхронизации расходов: " + rsp, Toast.LENGTH_LONG).show();
+            } else {
+            	dbHelper = new DBHelper(MainActivity.this);
+            	dbHelper.deleteExpenses(); // удаляем траты локально
+            	dbHelper.close();
+            	Toast.makeText(getApplicationContext(), "Экспортировано записей: " + rsp, Toast.LENGTH_SHORT).show();
+            }
+  			
+            dismissDialog(SYNC_PROGRESS_DIALOG_ID);
+    	}
+    };  
+    
+    
 	// Menu
 	 @Override
 	    public boolean onOptionsItemSelected(MenuItem item) {
@@ -424,7 +464,7 @@ implements AdapterView.OnItemSelectedListener // For Categories (spinner)
 	           		Cursor tmp = db.query(true,"data_", null,null,null,null,null,null,null);
 	           	   
 	           		if (tmp.getCount()>0 ) {
-	           			Toast.makeText(this, "Сначала синхронизируйте расходы!", Toast.LENGTH_SHORT).show();
+	           			Toast.makeText(this, "Сначала синхронизируйте расходы!", Toast.LENGTH_LONG).show();
     				} else {
     					showDialog(CAT_PROGRESS_DIALOG_ID);
     					// Запускаем новый поток для вытягивания категорий с удаленного сервера
@@ -451,15 +491,6 @@ implements AdapterView.OnItemSelectedListener // For Categories (spinner)
 	        return true;
 	    }
 	
-	
-	
-    /** Called when the user clicks the Send button */
-    public void sendMessage(View view) {
-        //Intent intent = new Intent(this, DisplayMessageActivity.class);
-        EditText editText = (EditText) findViewById(R.id.editText1);
-        String message = editText.getText().toString();
-    }
-
 
 	
 }

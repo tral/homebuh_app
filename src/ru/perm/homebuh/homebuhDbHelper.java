@@ -65,6 +65,13 @@ import android.database.sqlite.SQLiteOpenHelper;
 		return delCount;
     }
     
+    // Удаляет все расходы
+    public long deleteExpenses() {
+    	SQLiteDatabase db = this.getWritableDatabase();
+		long delCount  = db.delete("data_", null, null);
+		return delCount;
+    }
+    
     public String getSecretKey() {
     	SQLiteDatabase db = this.getWritableDatabase();
     	Cursor c = db.query("keys", null, "_id=1", null, null, null, null);

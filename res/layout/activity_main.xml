@@ -80,8 +80,8 @@
             android:layout_width="0dip"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:hint="@string/comment_placeholder"
-            android:ems="10" />
+            android:ems="10"
+            android:hint="@string/comment_placeholder" />
         
         <Button
             android:id="@+id/dateBtn"

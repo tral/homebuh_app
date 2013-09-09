@@ -1,7 +1,6 @@
 package ru.perm.homebuh;
 
 import java.util.Calendar;
-import java.util.Vector;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -24,6 +23,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -122,7 +122,7 @@ implements AdapterView.OnItemSelectedListener // For Categories (spinner)
    
         // Sum
         mSumVal = (EditText)findViewById(R.id.editText1);
-        
+                
         //Comment
         mComment = (EditText)findViewById(R.id.editText2);
         
@@ -216,8 +216,14 @@ implements AdapterView.OnItemSelectedListener // For Categories (spinner)
             }
         });
         
+        // Фокус , чтобы показать сразу клавиатуру
+        mSumVal.requestFocus();
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+
         
 	}
+	
+	
 	
 	protected void loadCategoriesLevel1() {
         dbHelper = new DBHelper(this);

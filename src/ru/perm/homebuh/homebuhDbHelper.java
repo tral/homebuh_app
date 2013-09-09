@@ -1,5 +1,8 @@
 package ru.perm.homebuh;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -13,6 +16,32 @@ import android.database.sqlite.SQLiteOpenHelper;
       super(context, "homebuhDB", null, 1);
     }
 
+    // Вставляет расход (трату) денег
+    public long insertExpense(long cat_id, int val, String date_, String comment) {
+    	
+    	SQLiteDatabase db = this.getWritableDatabase();
+		ContentValues cv = new ContentValues();
+    	
+		Calendar c=Calendar.getInstance(); 
+		int year=c.get(Calendar.YEAR); 
+		int month=c.get(Calendar.MONTH)+1; // с нуля месяцы  
+		int day=c.get(Calendar.DAY_OF_MONTH);
+		int min=c.get(Calendar.MINUTE);
+		int sec=c.get(Calendar.SECOND);
+		int hour=c.get(Calendar.HOUR_OF_DAY);
+		
+        //cv.put("_id", 1);
+        cv.put("date_", date_);
+        cv.put("enter_time", String.format("%02d", day)+"."+String.format("%02d", month)+"."+year+" "+hour+":"+min+":"+sec);
+        cv.put("comment", comment);
+        cv.put("cat_id", cat_id);
+        cv.put("val", val);
+        long rowID = db.insert("data_", null, cv);
+		
+		return rowID;
+    			
+    }
+    
     public long insertCategory(int _id,  int parent_id, String name, String pe) {
     	SQLiteDatabase db = this.getWritableDatabase();
 		ContentValues cv = new ContentValues();

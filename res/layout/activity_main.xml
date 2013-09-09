@@ -44,7 +44,7 @@
 
       <Spinner
           android:id="@+id/spinnerCat1"
-          android:layout_width="wrap_content"
+          android:layout_width="0dip"
           android:layout_height="wrap_content"
           android:layout_weight="1" />
         
@@ -60,7 +60,7 @@
 
       <Spinner
           android:id="@+id/spinnerCat2"
-          android:layout_width="wrap_content"
+          android:layout_width="0dip"
           android:layout_height="wrap_content"
           android:layout_weight="1" />
         
@@ -75,59 +75,47 @@
         android:layout_below="@+id/linearLayoutCat2"
         android:orientation="horizontal" >
 
+        <EditText
+            android:id="@+id/editText2"
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="@string/comment_placeholder"
+            android:ems="10" />
+        
         <Button
             android:id="@+id/dateBtn"
-            android:layout_width="fill_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
+
+        
+
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/linearLayout1"
+        android:id="@+id/linearLayoutMainBtns"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_below="@+id/linearLayoutDate"
         android:orientation="horizontal" >
+
+        
         
         <Button
-            android:id="@+id/button1"
+            android:id="@+id/saveBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/button1" />
+            android:layout_weight="0.22"
+            android:text="Сохранить" />
 
         <Button
-            android:id="@+id/button3"
-            android:layout_width="fill_parent"
+            android:id="@+id/syncBtn"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:onClick="sendMessage"
-            android:text="@string/button3" />
+            android:layout_weight="0.22"
+            android:text="Синхронизация" />
+
     </LinearLayout>
-
-    <CheckBox
-        android:id="@+id/checkBox1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/toggleButton2"
-        android:text="CheckBox" />
-
-    <ToggleButton
-        android:id="@+id/toggleButton2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/linearLayout1"
-        android:layout_marginTop="30dp"
-        android:text="ToggleButton" />
-
-    <TextView
-        android:id="@+id/textView3"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/checkBox1"
-        android:layout_alignRight="@+id/linearLayout1"
-        android:layout_below="@+id/checkBox1"
-        android:text="TextView" />
-
-    
 
 </RelativeLayout>

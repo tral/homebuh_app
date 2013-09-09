@@ -10,6 +10,7 @@
     <string name="button3">Button 3</string>
     
     <string name="sum_edit_placeholder">Сумма</string>
+    <string name="comment_placeholder">Комментарий</string>
     <string name="key_edit_text_placeholder">Секретный ключ синхронизации</string>
     
     

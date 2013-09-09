@@ -26,25 +26,19 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ToggleButton;
 
 
 public class MainActivity extends Activity
 // For Toggle Button
-implements CompoundButton.OnCheckedChangeListener//, CompoundButton.
-,AdapterView.OnItemSelectedListener // For Categories (spinner)
+implements AdapterView.OnItemSelectedListener // For Categories (spinner)
 {
     
 	ThreadUpdateCategories mThreadUpdateCategories;
-	
-	CheckBox cb;
 	
 	//Date
     private Button mPickDate;
@@ -61,6 +55,8 @@ implements CompoundButton.OnCheckedChangeListener//, CompoundButton.
     public static final int IDM_UPDATE_CATEGORIES = 101;
     public static final int IDM_KEY_SYNC = 102;
     
+    // Sum
+    EditText mSumVal;
     
     // Database
     DBHelper dbHelper;
@@ -73,6 +69,13 @@ implements CompoundButton.OnCheckedChangeListener//, CompoundButton.
     Cursor Cat1Cursor;
     Cursor Cat2Cursor;
     ProgressDialog mCatProgressDialog;
+    
+    // Buttons
+    Button mSaveBtn;
+    Button mSyncBtn;
+    
+    // Comment
+    EditText mComment;
     
     // Установит лейбл на кнопке с датой
     private void setLabelOnDateButton() {
@@ -114,44 +117,87 @@ implements CompoundButton.OnCheckedChangeListener//, CompoundButton.
         spn2.setOnItemSelectedListener(this);
         this.loadCategoriesLevel1();
    
-
+        // Sum
+        mSumVal = (EditText)findViewById(R.id.editText1);
         
-		
-		
-		
-        // ---------------------------
-		
-		//TextView txt = (TextView)findViewById(R.id.textView1);
-		//text.setText(R.string.button3);
-		
-		// For Toggle Button
-		ToggleButton tb = (ToggleButton)findViewById(R.id.toggleButton2);
-		tb.setOnCheckedChangeListener(this);
-		 
-		// For CheckBox
-		cb = (CheckBox)findViewById(R.id.checkBox1);
-		cb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-			
-			@Override
-			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-				
-				//TextView tv = (TextView)findViewById(R.id.textView1);
-				/*
-				 
-				if (isChecked) {
-					tv.setText("checked");
+        //Comment
+        mComment = (EditText)findViewById(R.id.editText2);
+        
+        // Buttons
+        mSaveBtn = (Button) findViewById(R.id.saveBtn);
+        mSaveBtn.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+            	
+            	int lSumVal;
+            	if (mSumVal.getText().toString().equalsIgnoreCase("")) {
+            		lSumVal = 0;
+            	} else {
+            		lSumVal = Integer.parseInt(mSumVal.getText().toString());	
+            	}
+            	
+            	if (lSumVal < 1) 
+            		Toast.makeText(MainActivity.this, "Введите сумму!", Toast.LENGTH_SHORT).show();
+            	 else 
+            		if (spn2.getCount() < 1) 
+            			Toast.makeText(MainActivity.this, "Загрузите категории!", Toast.LENGTH_SHORT).show();
+            		
+            	//Toast.makeText(MainActivity.this, "!"+spn2.getCount(), Toast.LENGTH_SHORT).show();
+            	
+            	dbHelper = new DBHelper(MainActivity.this);
+            	
+            	long lastInsertId = dbHelper.insertExpense(spn2.getSelectedItemId(), lSumVal, (String)mPickDate.getText(), mComment.getText().toString());
+
+	        	if (lastInsertId > 0) {
+	        		Toast.makeText(MainActivity.this, "сохранено, id="+lastInsertId, Toast.LENGTH_SHORT).show();
 				}
-				else {
-					tv.setText("NOT checked");
-				}
-				
-				tv.setText("! " + spn1.getSelectedItemId());
-				*/
-			}
-			
-		}
-		);
+	        	
+	        	dbHelper.close();
+            	
+            }
+        });
+        
+        mSyncBtn = (Button) findViewById(R.id.syncBtn);
+        mSyncBtn.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+            	
+            	
+            	
+            	dbHelper = new DBHelper(MainActivity.this);
+            	SQLiteDatabase db = dbHelper.getWritableDatabase();
+            	Cursor c = db.query("data_", null, null, null, null, null, "_id");
+            	
+            	 if (c.moveToFirst()) {
+
+	    	        int dateColIndex = c.getColumnIndex("date_");
+	    	        int etColIndex = c.getColumnIndex("enter_time");
+	    	        int commentColIndex = c.getColumnIndex("comment");
+	    	        int catColIndex = c.getColumnIndex("cat_id");
+	    	        int valColIndex = c.getColumnIndex("val");
 	
+	    	        String s;
+	    	        
+	    	        do {
+	    	          // получаем значения по номерам столбцов и пишем все в лог
+	    	        	s = "" + c.getString(dateColIndex) + " " + c.getString(etColIndex) + " " + 
+	    	        			 c.getString(commentColIndex) + " "  +c.getInt(catColIndex) + " "+c.getInt(valColIndex);
+	    	          /*Log.d(LOG_TAG,
+	    	              "ID = " + c.getInt(idColIndex) + 
+	    	              ", name = " + c.getString(nameColIndex) + 
+	    	              ", email = " + c.getString(emailColIndex));*/
+	    	          // переход на следующую строку 
+	    	          // а если следующей нет (текущая - последняя), то false - выходим из цикла
+	    	        } while (c.moveToNext());
+	    	        
+	    	        Toast.makeText(MainActivity.this, s, Toast.LENGTH_SHORT).show();
+            	 } 
+            	
+            	c.close();
+	        	dbHelper.close();
+            	
+            }
+        });
+        
+        
 	}
 	
 	protected void loadCategoriesLevel1() {
@@ -193,10 +239,10 @@ implements CompoundButton.OnCheckedChangeListener//, CompoundButton.
     	switch (parent.getId()) {
     	case R.id.spinnerCat1 :
     		this.loadCategoriesLevel2(id);
-    		Toast.makeText(this, "id = " + id, Toast.LENGTH_SHORT).show();
+    		//Toast.makeText(this, "id = " + id, Toast.LENGTH_SHORT).show();
     		break;
     	case R.id.spinnerCat2 :
-    		Toast.makeText(this, "id = " + id, Toast.LENGTH_SHORT).show();
+    		//Toast.makeText(this, "id = " + id, Toast.LENGTH_SHORT).show();
     		break;
     	}
     }
@@ -405,61 +451,7 @@ implements CompoundButton.OnCheckedChangeListener//, CompoundButton.
 	        return true;
 	    }
 	
-	// For Toggle Button
-	@Override
-	public void onCheckedChanged(CompoundButton buttonview, boolean isChecked) {
-		
-		Toast.makeText(getApplicationContext(), "Color: ", Toast.LENGTH_SHORT).show();
-		
-	//	EditText editText = (EditText) findViewById(R.id.editText1);
-		//String message = editText.getText().toString();
-		//TextView tv = (TextView)findViewById(R.id.textView1);
-        /*
-        if (isChecked)
-        	tv.setText("1");
-        else
-        	tv.setText("0");
-        */
-
-        TextView tv3 = (TextView)findViewById(R.id.textView3);
-        tv3.setText("");
-        // создаем объект для создания и управления версиями БД
-        dbHelper = new DBHelper(this);
-    
-		// подключаемся к БД
-		SQLiteDatabase db = dbHelper.getWritableDatabase();
-    
-	     Cursor c = db.query("keys", null, null, null, null, null, null);
-
-	      // ставим позицию курсора на первую строку выборки
-	      // если в выборке нет строк, вернется false
-	      if (c.moveToFirst()) {
-
-	        // определяем номера столбцов по имени в выборке
-	        int idColIndex = c.getColumnIndex("_id");
-	        int keyColIndex = c.getColumnIndex("key_val");
-	        
-
-	        do {
-	          // получаем значения по номерам столбцов и пишем все в лог
-	        	tv3.append(" id: " + c.getInt(idColIndex) + " val: " + c.getString(keyColIndex));
-	          /*Log.d(LOG_TAG,
-	              "ID = " + c.getInt(idColIndex) + 
-	              ", name = " + c.getString(nameColIndex) + 
-	              ", email = " + c.getString(emailColIndex));
-	              */
-	          // переход на следующую строку 
-	          // а если следующей нет (текущая - последняя), то false - выходим из цикла
-	        } while (c.moveToNext());
-	      } 
-	      
-	      c.close();
 	
-        
-		// закрываем подключение к БД
-		dbHelper.close();
-        
-	}
 	
     /** Called when the user clicks the Send button */
     public void sendMessage(View view) {

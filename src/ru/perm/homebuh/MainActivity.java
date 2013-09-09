@@ -143,25 +143,31 @@ implements AdapterView.OnItemSelectedListener // For Categories (spinner)
             	 else 
             		if (spn2.getCount() < 1) 
             			Toast.makeText(MainActivity.this, "Загрузите категории!", Toast.LENGTH_LONG).show();
-            		
-            	//Toast.makeText(MainActivity.this, "!"+spn2.getCount(), Toast.LENGTH_SHORT).show();
+            			else {
             	
-            	dbHelper = new DBHelper(MainActivity.this);
-            	
-            	long lastInsertId = dbHelper.insertExpense(spn2.getSelectedItemId(), lSumVal, (String)mPickDate.getText(), mComment.getText().toString());
+            				dbHelper = new DBHelper(MainActivity.this);
+                        	
+                        	long lastInsertId = dbHelper.insertExpense(spn2.getSelectedItemId(), lSumVal, (String)mPickDate.getText(), mComment.getText().toString());
 
-	        	if (lastInsertId > 0) {
-	        		Toast.makeText(MainActivity.this, "Cохранено", Toast.LENGTH_SHORT).show();
-				}
-	        	
-	        	dbHelper.close();
-	        	mSumVal.setText("");
-	        	mComment.setText("");
-	        	mSumVal.requestFocus();
+            	        	if (lastInsertId > 0) {
+            	        		Toast.makeText(MainActivity.this, "Cохранено", Toast.LENGTH_SHORT).show();
+            				}
+            	        	
+            	        	dbHelper.close();
+            	        	MainActivity.this.updateSyncLabel();
+            	        	mSumVal.setText("");
+            	        	mComment.setText("");
+            	        	mSumVal.requestFocus();
+
+            			}
+
+            	//Toast.makeText(MainActivity.this, "!"+spn2.getCount(), Toast.LENGTH_SHORT).show();
+
             }
         });
         
         mSyncBtn = (Button) findViewById(R.id.syncBtn);
+        this.updateSyncLabel();
         mSyncBtn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
             	
@@ -217,6 +223,15 @@ implements AdapterView.OnItemSelectedListener // For Categories (spinner)
         });
         
         
+	}
+	
+	protected void updateSyncLabel() {
+		dbHelper = new DBHelper(this);
+     	SQLiteDatabase db = dbHelper.getWritableDatabase();
+     	Cursor mCur = db.query("data_", null, null, null, null, null, "_id");
+		mSyncBtn.setText("Синхронизация (" + Integer.toString(mCur.getCount()) + ")");
+     	mCur.close();
+		dbHelper.close();
 	}
 	
 	protected void loadCategoriesLevel1() {
@@ -448,7 +463,7 @@ implements AdapterView.OnItemSelectedListener // For Categories (spinner)
             	dbHelper.close();
             	Toast.makeText(getApplicationContext(), "Экспортировано записей: " + rsp, Toast.LENGTH_SHORT).show();
             }
-  			
+            MainActivity.this.updateSyncLabel();
             dismissDialog(SYNC_PROGRESS_DIALOG_ID);
     	}
     };  

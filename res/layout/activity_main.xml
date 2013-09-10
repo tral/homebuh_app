@@ -8,6 +8,7 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".MainActivity" >
 
+   
 
     <LinearLayout
         android:id="@+id/linearLayoutSum"
@@ -33,13 +34,98 @@
 
     </LinearLayout>
     
+<LinearLayout
+        android:id="@+id/linearLayoutR1"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/linearLayoutSum"
+        android:orientation="horizontal" >
+
+    <ToggleButton
+        android:id="@+id/toggleButton1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:textOff = "Обеды на работе"
+        android:textOn = "Обеды на работе"
+        android:text="ToggleButton" />
+    
+    <ToggleButton
+        android:id="@+id/toggleButton2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:textOff = "Продукты домой"
+        android:textOn = "Продукты домой"
+        android:text="ToggleButton" />
+
+	</LinearLayout>
+	
+<LinearLayout
+        android:id="@+id/linearLayoutR2"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/linearLayoutR1"
+        android:orientation="horizontal" >
+
+    <ToggleButton
+        android:id="@+id/toggleButton3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:textOff = "Общест. транспорт"
+        android:textOn = "Общест. транспорт"
+        android:text="ToggleButton" />
+    
+    <ToggleButton
+        android:id="@+id/toggleButton4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:textOff = "Средства по уходу"
+        android:textOn = "Средства по уходу"
+        android:text="ToggleButton" />
+
+	</LinearLayout>
+	
+
+    
+
+    <LinearLayout
+        android:id="@+id/linearLayoutMainBtns"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/linearLayoutR2"
+        android:orientation="horizontal" >
+
+        
+        
+        <Button
+            android:id="@+id/saveBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.22"
+            android:text="Сохранить" />
+
+        <Button
+            android:id="@+id/syncBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.22"
+            android:text="Синхронизация" />
+
+    </LinearLayout>
+
 
   <LinearLayout
         android:id="@+id/linearLayoutCat1"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:layout_below="@+id/linearLayoutSum"
+        android:layout_below="@+id/linearLayoutMainBtns"
         android:orientation="horizontal" >
 
       <Spinner
@@ -92,30 +178,6 @@
 
     </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/linearLayoutMainBtns"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/linearLayoutDate"
-        android:orientation="horizontal" >
 
-        
-        
-        <Button
-            android:id="@+id/saveBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.22"
-            android:text="Сохранить" />
-
-        <Button
-            android:id="@+id/syncBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.22"
-            android:text="Синхронизация" />
-
-    </LinearLayout>
 
 </RelativeLayout>

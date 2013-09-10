@@ -26,16 +26,19 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 
 public class MainActivity extends Activity
 // For Toggle Button
-implements AdapterView.OnItemSelectedListener // For Categories (spinner)
+implements AdapterView.OnItemSelectedListener, // For Categories (spinner)
+CompoundButton.OnCheckedChangeListener // For ToggleButtons
 {
     
 	ThreadUpdateCategories mThreadUpdateCategories;
@@ -72,6 +75,10 @@ implements AdapterView.OnItemSelectedListener // For Categories (spinner)
     Cursor Cat2Cursor;
     ProgressDialog mCatProgressDialog;
     ProgressDialog mSyncProgressDialog;
+    ToggleButton tb1;
+    ToggleButton tb2;
+    ToggleButton tb3;
+    ToggleButton tb4;
     
     // Buttons
     Button mSaveBtn;
@@ -114,6 +121,14 @@ implements AdapterView.OnItemSelectedListener // For Categories (spinner)
         });
 		
         // --- Categories ---
+        tb1 = (ToggleButton)findViewById(R.id.toggleButton1);
+        tb2 = (ToggleButton)findViewById(R.id.toggleButton2);
+        tb3 = (ToggleButton)findViewById(R.id.toggleButton3);
+        tb4 = (ToggleButton)findViewById(R.id.toggleButton4);
+        tb1.setOnCheckedChangeListener(this);
+        tb2.setOnCheckedChangeListener(this);
+        tb3.setOnCheckedChangeListener(this);
+        tb4.setOnCheckedChangeListener(this);
         spn1 = (Spinner)findViewById(R.id.spinnerCat1);
         spn1.setOnItemSelectedListener(this);
         spn2 = (Spinner)findViewById(R.id.spinnerCat2);
@@ -141,13 +156,20 @@ implements AdapterView.OnItemSelectedListener // For Categories (spinner)
             	if (lSumVal < 1) 
             		Toast.makeText(MainActivity.this, "Введите сумму!", Toast.LENGTH_LONG).show();
             	 else 
-            		if (spn2.getCount() < 1) 
+            		if (spn2.getCount() < 1 && !tb1.isChecked() && !tb2.isChecked() && !tb3.isChecked() && !tb4.isChecked()) 
             			Toast.makeText(MainActivity.this, "Загрузите категории!", Toast.LENGTH_LONG).show();
             			else {
             	
+            				long cat_id = spn2.getSelectedItemId();
+            				
+            				if (tb1.isChecked()) cat_id = 53;
+            				if (tb2.isChecked()) cat_id = 52;
+            				if (tb3.isChecked()) cat_id = 88;
+            				if (tb4.isChecked()) cat_id = 123;
+            				
             				dbHelper = new DBHelper(MainActivity.this);
                         	
-                        	long lastInsertId = dbHelper.insertExpense(spn2.getSelectedItemId(), lSumVal, (String)mPickDate.getText(), mComment.getText().toString());
+                        	long lastInsertId = dbHelper.insertExpense(cat_id, lSumVal, (String)mPickDate.getText(), mComment.getText().toString());
 
             	        	if (lastInsertId > 0) {
             	        		Toast.makeText(MainActivity.this, "Cохранено", Toast.LENGTH_SHORT).show();
@@ -157,6 +179,7 @@ implements AdapterView.OnItemSelectedListener // For Categories (spinner)
             	        	MainActivity.this.updateSyncLabel();
             	        	mSumVal.setText("");
             	        	mComment.setText("");
+            	        	MainActivity.this.nullToggles(-1);
             	        	mSumVal.requestFocus();
 
             			}
@@ -516,5 +539,27 @@ implements AdapterView.OnItemSelectedListener // For Categories (spinner)
 	    }
 	
 
+	 public void nullToggles(int except_id) {
+		if (except_id != tb1.getId())
+			tb1.setChecked(false);
+		if (except_id != tb2.getId())
+			tb2.setChecked(false);
+		if (except_id != tb3.getId())
+			tb3.setChecked(false);
+		if (except_id != tb4.getId())
+			tb4.setChecked(false);
+	 }
+	 
+	  @Override
+	    public void onCheckedChanged(CompoundButton button, boolean isChecked) {
+	        if (isChecked) {
+	        	this.nullToggles(button.getId());
+	            //text.setText("Button checked");
+	        }
+	        else {
+	           // text.setText("Button unchecked");
+	        }
+	    }
+	 
 	
 }

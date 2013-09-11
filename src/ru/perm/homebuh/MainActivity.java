@@ -31,6 +31,7 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
@@ -86,6 +87,7 @@ CompoundButton.OnCheckedChangeListener // For ToggleButtons
     
     // Comment
     EditText mComment;
+    TextView mLog;
     
     // Установит лейбл на кнопке с датой
     private void setLabelOnDateButton() {
@@ -141,6 +143,9 @@ CompoundButton.OnCheckedChangeListener // For ToggleButtons
         //Comment
         mComment = (EditText)findViewById(R.id.editText2);
         
+        mLog = (TextView)findViewById(R.id.textViewLog);
+        this.updateLogLabel();
+        
         // Buttons
         mSaveBtn = (Button) findViewById(R.id.saveBtn);
         mSaveBtn.setOnClickListener(new View.OnClickListener() {
@@ -181,7 +186,7 @@ CompoundButton.OnCheckedChangeListener // For ToggleButtons
             	        	mComment.setText("");
             	        	MainActivity.this.nullToggles(-1);
             	        	mSumVal.requestFocus();
-
+            	        	MainActivity.this.updateLogLabel();
             			}
 
             	//Toast.makeText(MainActivity.this, "!"+spn2.getCount(), Toast.LENGTH_SHORT).show();
@@ -261,7 +266,40 @@ CompoundButton.OnCheckedChangeListener // For ToggleButtons
 		dbHelper.close();
 	}
 	
-	
+	protected void updateLogLabel() {
+		
+		mLog.setText("");
+		
+		dbHelper = new DBHelper(this);
+     	SQLiteDatabase db = dbHelper.getWritableDatabase();
+     	
+     	String sqlQuery = "select d.val as val, c.name "
+     	        + "from data_ as d "
+     	        + "inner join category as c "
+     	        + "on c._id = d.cat_id ";
+     	
+     	Cursor mCur = db.rawQuery(sqlQuery, null);
+     	
+     	int i=0;
+     	if (mCur.moveToFirst()) {
+     		
+ 	        int nameColIndex = mCur.getColumnIndex("name");
+ 	        int valColIndex = mCur.getColumnIndex("val");
+ 	        
+ 	        do {
+ 	        	if (i>0)
+ 	        		mLog.append(", ");
+ 	        	mLog.append(mCur.getString(nameColIndex) +" " + Integer.toString(mCur.getInt(valColIndex)));
+ 	        	i++;
+ 	        } while (mCur.moveToNext());
+    	 } 
+     	
+     	
+     	
+     	
+     	mCur.close();
+		dbHelper.close();
+	}
 	
 	protected void loadCategoriesLevel1() {
         dbHelper = new DBHelper(this);
@@ -493,6 +531,7 @@ CompoundButton.OnCheckedChangeListener // For ToggleButtons
             	Toast.makeText(getApplicationContext(), "Экспортировано записей: " + rsp, Toast.LENGTH_SHORT).show();
             }
             MainActivity.this.updateSyncLabel();
+            MainActivity.this.updateLogLabel();
             dismissDialog(SYNC_PROGRESS_DIALOG_ID);
     	}
     };  

@@ -24,15 +24,16 @@ public final class R {
         public static final int ic_launcher=0x7f020000;
     }
     public static final class id {
-        public static final int action_settings=0x7f090014;
+        public static final int action_settings=0x7f090016;
         public static final int dateBtn=0x7f090011;
         public static final int editText1=0x7f090001;
         public static final int editText2=0x7f090010;
-        public static final int key_dialog_layout=0x7f090012;
-        public static final int key_edit_text=0x7f090013;
+        public static final int key_dialog_layout=0x7f090014;
+        public static final int key_edit_text=0x7f090015;
         public static final int linearLayoutCat1=0x7f09000b;
         public static final int linearLayoutCat2=0x7f09000d;
         public static final int linearLayoutDate=0x7f09000f;
+        public static final int linearLayoutLog=0x7f090012;
         public static final int linearLayoutMainBtns=0x7f090008;
         public static final int linearLayoutR1=0x7f090002;
         public static final int linearLayoutR2=0x7f090005;
@@ -41,6 +42,7 @@ public final class R {
         public static final int spinnerCat1=0x7f09000c;
         public static final int spinnerCat2=0x7f09000e;
         public static final int syncBtn=0x7f09000a;
+        public static final int textViewLog=0x7f090013;
         public static final int toggleButton1=0x7f090003;
         public static final int toggleButton2=0x7f090004;
         public static final int toggleButton3=0x7f090006;

@@ -101,14 +101,13 @@
         android:layout_below="@+id/linearLayoutR2"
         android:orientation="horizontal" >
 
-        
-        
         <Button
             android:id="@+id/saveBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="0.22"
-            android:text="Сохранить" />
+            android:text="Сохранить"
+            android:textStyle="bold" />
 
         <Button
             android:id="@+id/syncBtn"

@@ -292,10 +292,7 @@ CompoundButton.OnCheckedChangeListener // For ToggleButtons
  	        	mLog.append(mCur.getString(nameColIndex) +" " + Integer.toString(mCur.getInt(valColIndex)));
  	        	i++;
  	        } while (mCur.moveToNext());
-    	 } 
-     	
-     	
-     	
+    	} 
      	
      	mCur.close();
 		dbHelper.close();

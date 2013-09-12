@@ -276,7 +276,8 @@ CompoundButton.OnCheckedChangeListener // For ToggleButtons
      	String sqlQuery = "select d.val as val, c.name "
      	        + "from data_ as d "
      	        + "inner join category as c "
-     	        + "on c._id = d.cat_id ";
+     	        + "on c._id = d.cat_id "
+     	        + " ORDER BY d._id DESC";
      	
      	Cursor mCur = db.rawQuery(sqlQuery, null);
      	
@@ -514,22 +515,29 @@ CompoundButton.OnCheckedChangeListener // For ToggleButtons
     final Handler handlerSync = new Handler() {
     	public void handleMessage(Message msg) {
 
-    		String rsp = msg.getData().getString("rsp");
-            Boolean lWasError = msg.getData().getBoolean("wasError");
-              
-            mThreadSyncExpenses.setState(ThreadUpdateCategories.STATE_DONE);
-              
-            if (lWasError) {
-            	Toast.makeText(getApplicationContext(), "ќшибка синхронизации расходов: " + rsp, Toast.LENGTH_LONG).show();
-            } else {
-            	dbHelper = new DBHelper(MainActivity.this);
-            	dbHelper.deleteExpenses(); // удал€ем траты локально
-            	dbHelper.close();
-            	Toast.makeText(getApplicationContext(), "Ёкспортировано записей: " + rsp, Toast.LENGTH_SHORT).show();
-            }
-            MainActivity.this.updateSyncLabel();
-            MainActivity.this.updateLogLabel();
-            dismissDialog(SYNC_PROGRESS_DIALOG_ID);
+    		try {
+	    		String rsp = msg.getData().getString("rsp");
+	            Boolean lWasError = msg.getData().getBoolean("wasError");
+	              
+	            mThreadSyncExpenses.setState(ThreadUpdateCategories.STATE_DONE);
+	              
+	            if (lWasError) {
+	            	Toast.makeText(getApplicationContext(), "ќшибка синхронизации расходов: " + rsp, Toast.LENGTH_LONG).show();
+	            } else {
+	            	dbHelper = new DBHelper(MainActivity.this);
+	            	dbHelper.deleteExpenses(); // удал€ем траты локально
+	            	dbHelper.close();
+	            	Toast.makeText(getApplicationContext(), "Ёкспортировано записей: " + rsp, Toast.LENGTH_SHORT).show();
+	            }
+	            MainActivity.this.updateSyncLabel();
+	            MainActivity.this.updateLogLabel();
+	            dismissDialog(SYNC_PROGRESS_DIALOG_ID);
+	    	}
+	        catch (Exception e) {
+	        	Toast.makeText(getApplicationContext(), "handleMessage(Message msg): " + e.toString() +" Message:" +e.getMessage(), Toast.LENGTH_SHORT).show();
+	        }
+            
+            
     	}
     };  
     

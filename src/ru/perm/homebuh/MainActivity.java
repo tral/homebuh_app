@@ -488,7 +488,7 @@ CompoundButton.OnCheckedChangeListener // For ToggleButtons
 			    				
 			    			}
 			    				catch (Exception e) {
-			    					Toast.makeText(getApplicationContext(), "Database Exception" + e.getMessage(), Toast.LENGTH_LONG).show();
+			    					Toast.makeText(getApplicationContext(), "EX2! " + "Database Exception" + e.getMessage(), Toast.LENGTH_LONG).show();
 			    			}
     
 					}
@@ -498,7 +498,7 @@ CompoundButton.OnCheckedChangeListener // For ToggleButtons
 					dbHelper.close();
 					
 				} catch (JSONException e) {
-					Toast.makeText(getApplicationContext(), "JSON Exception: "+e.getMessage(), Toast.LENGTH_LONG).show();
+					Toast.makeText(getApplicationContext(), "EX3! " + "JSON Exception: "+e.getMessage(), Toast.LENGTH_LONG).show();
 				}
                 
                 
@@ -519,7 +519,7 @@ CompoundButton.OnCheckedChangeListener // For ToggleButtons
 	    		String rsp = msg.getData().getString("rsp");
 	            Boolean lWasError = msg.getData().getBoolean("wasError");
 	              
-	            mThreadSyncExpenses.setState(ThreadUpdateCategories.STATE_DONE);
+	            mThreadSyncExpenses.setState(ThreadSyncExpenses.STATE_DONE);
 	              
 	            if (lWasError) {
 	            	Toast.makeText(getApplicationContext(), "Ошибка синхронизации расходов: " + rsp, Toast.LENGTH_LONG).show();
@@ -534,7 +534,7 @@ CompoundButton.OnCheckedChangeListener // For ToggleButtons
 	            dismissDialog(SYNC_PROGRESS_DIALOG_ID);
 	    	}
 	        catch (Exception e) {
-	        	Toast.makeText(getApplicationContext(), "handleMessage(Message msg): " + e.toString() +" Message:" +e.getMessage(), Toast.LENGTH_SHORT).show();
+	        	Toast.makeText(getApplicationContext(), "EX4! " + e.toString() +" Message:" +e.getMessage(), Toast.LENGTH_LONG).show();
 	        }
             
             

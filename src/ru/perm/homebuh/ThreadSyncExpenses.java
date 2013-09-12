@@ -73,7 +73,7 @@ public class ThreadSyncExpenses extends Thread {
         	}
 	        catch (Exception e) {
 	        	lWasError = true;
-	        	result = e.toString() +" Message:" +e.getMessage();
+	        	result = "EX1! " + e.toString() +" Message:" +e.getMessage();
 	        }
         	
 	        Message msg = mHandler.obtainMessage();
@@ -125,7 +125,7 @@ public class ThreadSyncExpenses extends Thread {
          }
         }
         catch (Exception e) {
-         answer = e.toString() +" Message:" +e.getMessage();
+         answer = "EX5! " + e.toString() +" Message:" +e.getMessage();
         }
         
        return answer;

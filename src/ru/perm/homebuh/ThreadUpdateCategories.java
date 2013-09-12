@@ -58,7 +58,7 @@ public class ThreadUpdateCategories extends Thread {
 	         }
 	        }
 	        catch (Exception e) {
-	         result = e.toString() +" Message:" +e.getMessage();
+	         result = "EX6! " +  e.toString() +" Message:" +e.getMessage();
 	         lWasError = true;
 	        }
 	        

@@ -46,7 +46,7 @@ import android.database.sqlite.SQLiteOpenHelper;
     	SQLiteDatabase db = this.getWritableDatabase();
 		ContentValues cv = new ContentValues();
 		cv.put("_id", _id);
-		if (parent_id > 0) {
+		if (parent_id >= 0) {
 			cv.put("parent_id", parent_id);
 		}
 		cv.put("name", name);

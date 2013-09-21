@@ -161,8 +161,10 @@ CompoundButton.OnCheckedChangeListener // For ToggleButtons
             	if (lSumVal < 1) 
             		Toast.makeText(MainActivity.this, "¬ведите сумму!", Toast.LENGTH_LONG).show();
             	 else 
-            		if (spn2.getCount() < 1 && !tb1.isChecked() && !tb2.isChecked() && !tb3.isChecked() && !tb4.isChecked()) 
+            		if (spn2.getCount() < 1) 
             			Toast.makeText(MainActivity.this, "«агрузите категории!", Toast.LENGTH_LONG).show();
+            		else if (spn2.getSelectedItemId() < 1 && !tb1.isChecked() && !tb2.isChecked() && !tb3.isChecked() && !tb4.isChecked())
+            			Toast.makeText(MainActivity.this, "¬ыберите категорию!", Toast.LENGTH_LONG).show();
             			else {
             	
             				long cat_id = spn2.getSelectedItemId();
@@ -185,6 +187,8 @@ CompoundButton.OnCheckedChangeListener // For ToggleButtons
             	        	mSumVal.setText("");
             	        	mComment.setText("");
             	        	MainActivity.this.nullToggles(-1);
+            	        	spn1.setSelection(0);
+            	        	spn2.setSelection(0);
             	        	mSumVal.requestFocus();
             	        	MainActivity.this.updateLogLabel();
             			}
@@ -322,7 +326,7 @@ CompoundButton.OnCheckedChangeListener // For ToggleButtons
 	    String[] queryCols=new String[]{"_id", "name"};
 	    String[] adapterCols=new String[]{"name"};
 	    int[] adapterRowViews=new int[]{android.R.id.text1};
-	    Cat2Cursor=db.query(true, "category", queryCols, "parent_id = " + parent_id ,null,null,null,"name", null);
+	    Cat2Cursor=db.query(true, "category", queryCols, "parent_id = " + parent_id, null, null, null, "name", null);
 	    //this.startManagingCursor(Cat1Cursor); падает при свитче задач
 	    sca2=new SimpleCursorAdapter(this, android.R.layout.simple_spinner_item, Cat2Cursor, adapterCols, adapterRowViews,0);
 	    sca2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -470,6 +474,10 @@ CompoundButton.OnCheckedChangeListener // For ToggleButtons
 					
 					dbHelper = new DBHelper(MainActivity.this);
 					dbHelper.deleteCategories();
+					
+					lastInsertId = dbHelper.insertCategory(0, -1, " Ч", "expense");
+					lastInsertId = dbHelper.insertCategory(-1, 0, " Ч", "expense");
+					
 					for (int i=0; i < jArray.length(); i++)
 					{
 					        JSONObject oneObject = jArray.getJSONObject(i);

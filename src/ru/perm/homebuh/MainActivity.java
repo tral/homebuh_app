@@ -114,17 +114,8 @@ CompoundButton.OnCheckedChangeListener // For ToggleButtons
 		setContentView(R.layout.activity_main);
 		
 	    // --- Date ---
-		// get the current date
-		/*
-        final Calendar c = Calendar.getInstance();
-        mYear = c.get(Calendar.YEAR);
-        mMonth = c.get(Calendar.MONTH);
-        mDay = c.get(Calendar.DAY_OF_MONTH);
-        mPickDate = (Button) findViewById(R.id.dateBtn);
-        */
 		mPickDate = (Button) findViewById(R.id.dateBtn);
 		this.setTodayDate();
-        //this.setLabelOnDateButton();
 		
         // add a click listener to the button
         mPickDate.setOnClickListener(new View.OnClickListener() {

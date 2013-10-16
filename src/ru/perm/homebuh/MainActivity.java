@@ -18,6 +18,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -89,6 +90,14 @@ CompoundButton.OnCheckedChangeListener // For ToggleButtons
     EditText mComment;
     TextView mLog;
     
+    private void setTodayDate() {
+    	final Calendar c = Calendar.getInstance();
+        mYear = c.get(Calendar.YEAR);
+        mMonth = c.get(Calendar.MONTH);
+        mDay = c.get(Calendar.DAY_OF_MONTH);
+        this.setLabelOnDateButton();
+    }
+    
     // Установит лейбл на кнопке с датой
     private void setLabelOnDateButton() {
     	mPickDate.setText(
@@ -104,17 +113,19 @@ CompoundButton.OnCheckedChangeListener // For ToggleButtons
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		
-		// --- Date ---
-		
+	    // --- Date ---
 		// get the current date
+		/*
         final Calendar c = Calendar.getInstance();
         mYear = c.get(Calendar.YEAR);
         mMonth = c.get(Calendar.MONTH);
         mDay = c.get(Calendar.DAY_OF_MONTH);
-        
         mPickDate = (Button) findViewById(R.id.dateBtn);
-        this.setLabelOnDateButton();
-        
+        */
+		mPickDate = (Button) findViewById(R.id.dateBtn);
+		this.setTodayDate();
+        //this.setLabelOnDateButton();
+		
         // add a click listener to the button
         mPickDate.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -150,7 +161,7 @@ CompoundButton.OnCheckedChangeListener // For ToggleButtons
         mSaveBtn = (Button) findViewById(R.id.saveBtn);
         mSaveBtn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-            	
+
             	int lSumVal;
             	if (mSumVal.getText().toString().equalsIgnoreCase("")) {
             		lSumVal = 0;
@@ -159,12 +170,12 @@ CompoundButton.OnCheckedChangeListener // For ToggleButtons
             	}
             	
             	if (lSumVal < 1) 
-            		Toast.makeText(MainActivity.this, "Введите сумму!", Toast.LENGTH_LONG).show();
+            		MainActivity.this.ShowToast("Введите сумму!", Toast.LENGTH_LONG);
             	 else 
             		if (spn2.getCount() < 1) 
-            			Toast.makeText(MainActivity.this, "Загрузите категории!", Toast.LENGTH_LONG).show();
+            			MainActivity.this.ShowToast("Загрузите категории!", Toast.LENGTH_LONG);
             		else if (spn2.getSelectedItemId() < 1 && !tb1.isChecked() && !tb2.isChecked() && !tb3.isChecked() && !tb4.isChecked())
-            			Toast.makeText(MainActivity.this, "Выберите категорию!", Toast.LENGTH_LONG).show();
+            			MainActivity.this.ShowToast("Выберите категорию!", Toast.LENGTH_LONG);
             			else {
             	
             				long cat_id = spn2.getSelectedItemId();
@@ -179,7 +190,7 @@ CompoundButton.OnCheckedChangeListener // For ToggleButtons
                         	long lastInsertId = dbHelper.insertExpense(cat_id, lSumVal, (String)mPickDate.getText(), mComment.getText().toString());
 
             	        	if (lastInsertId > 0) {
-            	        		Toast.makeText(MainActivity.this, "Cохранено", Toast.LENGTH_SHORT).show();
+            	        		MainActivity.this.ShowToast("Cохранено", Toast.LENGTH_SHORT);
             				}
             	        	
             	        	dbHelper.close();
@@ -192,9 +203,6 @@ CompoundButton.OnCheckedChangeListener // For ToggleButtons
             	        	mSumVal.requestFocus();
             	        	MainActivity.this.updateLogLabel();
             			}
-
-            	//Toast.makeText(MainActivity.this, "!"+spn2.getCount(), Toast.LENGTH_SHORT).show();
-
             }
         });
         
@@ -208,7 +216,7 @@ CompoundButton.OnCheckedChangeListener // For ToggleButtons
             	Cursor mCur = db.query("data_", null, null, null, null, null, "_id");
             	 
             	if (mCur.getCount() < 1) {
-            		Toast.makeText(MainActivity.this, "Нет несинхронизированных расходов!", Toast.LENGTH_LONG).show();            		
+            		MainActivity.this.ShowToast("Нет несинхронизированных расходов!", Toast.LENGTH_LONG);
             	} else {
             		
             		showDialog(SYNC_PROGRESS_DIALOG_ID);
@@ -253,13 +261,27 @@ CompoundButton.OnCheckedChangeListener // For ToggleButtons
             	
             }
         });
-        
+
         // Фокус , чтобы показать сразу клавиатуру
         mSumVal.requestFocus();
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
-
         
 	}
+	
+	@Override
+	protected void onResume() {
+	    super.onResume();
+	    this.setTodayDate();
+	    this.ShowToast("Установлена текущая дата", Toast.LENGTH_SHORT);
+	}
+	
+	
+	protected void ShowToast(String txt, int lng) {
+		Toast toast = Toast.makeText(MainActivity.this, txt, lng);
+	    toast.setGravity(Gravity.TOP, 0, 0);
+	    toast.show();
+	} 
+
 	
 	protected void updateSyncLabel() {
 		dbHelper = new DBHelper(this);
@@ -342,10 +364,8 @@ CompoundButton.OnCheckedChangeListener // For ToggleButtons
     	switch (parent.getId()) {
     	case R.id.spinnerCat1 :
     		this.loadCategoriesLevel2(id);
-    		//Toast.makeText(this, "id = " + id, Toast.LENGTH_SHORT).show();
     		break;
     	case R.id.spinnerCat2 :
-    		//Toast.makeText(this, "id = " + id, Toast.LENGTH_SHORT).show();
     		break;
     	}
     }
@@ -461,7 +481,7 @@ CompoundButton.OnCheckedChangeListener // For ToggleButtons
             mThreadUpdateCategories.setState(ThreadUpdateCategories.STATE_DONE);
             
             if (lWasError) {
-            	Toast.makeText(getApplicationContext(), "Ошибка обновления категорий: " + rsp, Toast.LENGTH_LONG).show();
+            	MainActivity.this.ShowToast("Ошибка обновления категорий: " + rsp, Toast.LENGTH_LONG);
             } else {
 				
             	long lInsertedRows = 0;
@@ -496,7 +516,8 @@ CompoundButton.OnCheckedChangeListener // For ToggleButtons
 			    				
 			    			}
 			    				catch (Exception e) {
-			    					Toast.makeText(getApplicationContext(), "EX2! " + "Database Exception" + e.getMessage(), Toast.LENGTH_LONG).show();
+			    					//Toast.makeText(getApplicationContext(), "EX2! " + "Database Exception" + e.getMessage(), Toast.LENGTH_LONG).show();
+			    					MainActivity.this.ShowToast("EX2! " + "Database Exception" + e.getMessage(), Toast.LENGTH_LONG);
 			    			}
     
 					}
@@ -506,11 +527,11 @@ CompoundButton.OnCheckedChangeListener // For ToggleButtons
 					dbHelper.close();
 					
 				} catch (JSONException e) {
-					Toast.makeText(getApplicationContext(), "EX3! " + "JSON Exception: "+e.getMessage(), Toast.LENGTH_LONG).show();
+					//Toast.makeText(getApplicationContext(), "EX3! " + "JSON Exception: "+e.getMessage(), Toast.LENGTH_LONG).show();
+					MainActivity.this.ShowToast("EX3! " + "JSON Exception: "+e.getMessage(), Toast.LENGTH_LONG);
 				}
                 
-                
-                Toast.makeText(getApplicationContext(), "Категории обновлены, загружено " + lInsertedRows + " записей", Toast.LENGTH_SHORT).show();
+                MainActivity.this.ShowToast("Категории обновлены, загружено " + lInsertedRows + " записей", Toast.LENGTH_SHORT);
                 
             } // was Inet Error ?
                 
@@ -530,19 +551,19 @@ CompoundButton.OnCheckedChangeListener // For ToggleButtons
 	            mThreadSyncExpenses.setState(ThreadSyncExpenses.STATE_DONE);
 	              
 	            if (lWasError) {
-	            	Toast.makeText(getApplicationContext(), "Ошибка синхронизации расходов: " + rsp, Toast.LENGTH_LONG).show();
+	            	MainActivity.this.ShowToast("Ошибка синхронизации расходов: " + rsp, Toast.LENGTH_LONG);
 	            } else {
 	            	dbHelper = new DBHelper(MainActivity.this);
 	            	dbHelper.deleteExpenses(); // удаляем траты локально
 	            	dbHelper.close();
-	            	Toast.makeText(getApplicationContext(), "Экспортировано записей: " + rsp, Toast.LENGTH_SHORT).show();
+	            	MainActivity.this.ShowToast("Экспортировано записей: " + rsp, Toast.LENGTH_SHORT);
 	            }
 	            MainActivity.this.updateSyncLabel();
 	            MainActivity.this.updateLogLabel();
 	            dismissDialog(SYNC_PROGRESS_DIALOG_ID);
 	    	}
 	        catch (Exception e) {
-	        	Toast.makeText(getApplicationContext(), "EX4! " + e.toString() +" Message:" +e.getMessage(), Toast.LENGTH_LONG).show();
+	        	MainActivity.this.ShowToast("EX4! " + e.toString() +" Message:" +e.getMessage(), Toast.LENGTH_LONG);
 	        }
             
             
@@ -563,7 +584,7 @@ CompoundButton.OnCheckedChangeListener // For ToggleButtons
 	           		Cursor tmp = db.query(true,"data_", null,null,null,null,null,null,null);
 	           	   
 	           		if (tmp.getCount()>0 ) {
-	           			Toast.makeText(this, "Сначала синхронизируйте расходы!", Toast.LENGTH_LONG).show();
+	           			MainActivity.this.ShowToast("Сначала синхронизируйте расходы!", Toast.LENGTH_LONG);
     				} else {
     					showDialog(CAT_PROGRESS_DIALOG_ID);
     					// Запускаем новый поток для вытягивания категорий с удаленного сервера
@@ -576,8 +597,6 @@ CompoundButton.OnCheckedChangeListener // For ToggleButtons
 	           		tmp.close();
 	           		dbHelper.close();
 	            	
-	            	//Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
-
 	                break;
 	            case IDM_KEY_SYNC:
 	            	showDialog(KEY_DIALOG_ID);

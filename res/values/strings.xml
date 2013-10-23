@@ -5,9 +5,13 @@
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello Android!</string>
 
-    <string name="button1">Button 1</string>
-    <string name="button2">Button 2</string>
-    <string name="button3">Button 3</string>
+    <string name="shortcut_button1">Обеды на работе</string>
+    <string name="shortcut_button2">Продукты домой</string>
+    <string name="shortcut_button3">Общест. транспорт</string>
+    <string name="shortcut_button4">Средства по уходу</string>
+    
+    <string name="sync_button">Синхронизация</string>
+    <string name="save_button">Сохранить</string>
     
     <string name="sum_edit_placeholder">Сумма</string>
     <string name="comment_placeholder">Комментарий</string>

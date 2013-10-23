@@ -8,8 +8,6 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".MainActivity" >
 
-
-
     <LinearLayout
         android:id="@+id/linearLayoutSum"
         android:layout_width="fill_parent"
@@ -47,19 +45,19 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:textOff = "Обеды на работе"
-        android:textOn = "Обеды на работе"
-        android:text="ToggleButton" />
+        android:textOff = "@string/shortcut_button1"
+        android:textOn = "@string/shortcut_button1"
+        android:text="@string/shortcut_button1" />
     
     <ToggleButton
-        android:id="@+id/toggleButton2"
+        android:id="@+id/toggleButton3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:textOff = "Продукты домой"
-        android:textOn = "Продукты домой"
-        android:text="ToggleButton" />
-
+        android:textOff = "@string/shortcut_button3"
+        android:textOn = "@string/shortcut_button3"
+        android:text="@string/shortcut_button3" />
+    
 	</LinearLayout>
 	
 <LinearLayout
@@ -71,27 +69,24 @@
         android:orientation="horizontal" >
 
     <ToggleButton
-        android:id="@+id/toggleButton3"
+        android:id="@+id/toggleButton2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:textOff = "Общест. транспорт"
-        android:textOn = "Общест. транспорт"
-        android:text="ToggleButton" />
+        android:textOff = "@string/shortcut_button2"
+        android:textOn = "@string/shortcut_button2"
+        android:text="@string/shortcut_button2" />
     
     <ToggleButton
         android:id="@+id/toggleButton4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:textOff = "Средства по уходу"
-        android:textOn = "Средства по уходу"
-        android:text="ToggleButton" />
+        android:textOff = "@string/shortcut_button4"
+        android:textOn = "@string/shortcut_button4"
+        android:text="@string/shortcut_button4" />
 
 	</LinearLayout>
-	
-
-    
 
     <LinearLayout
         android:id="@+id/linearLayoutMainBtns"
@@ -106,7 +101,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="0.22"
-            android:text="Сохранить"
+            android:text="@string/save_button"
             android:textStyle="bold" />
 
         <Button
@@ -114,10 +109,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="0.22"
-            android:text="Синхронизация" />
+            android:text="@string/sync_button" />
 
     </LinearLayout>
-
 
   <LinearLayout
         android:id="@+id/linearLayoutCat1"
@@ -173,8 +167,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
-        
-
     </LinearLayout>
 
 	<LinearLayout
@@ -192,6 +184,5 @@
 		    android:text="" />
 	    
     </LinearLayout>
-
 
 </RelativeLayout>

@@ -44,8 +44,8 @@ public final class R {
         public static final int syncBtn=0x7f09000a;
         public static final int textViewLog=0x7f090013;
         public static final int toggleButton1=0x7f090003;
-        public static final int toggleButton2=0x7f090004;
-        public static final int toggleButton3=0x7f090006;
+        public static final int toggleButton2=0x7f090006;
+        public static final int toggleButton3=0x7f090004;
         public static final int toggleButton4=0x7f090007;
     }
     public static final class integer {
@@ -61,13 +61,16 @@ public final class R {
     public static final class string {
         public static final int action_settings=0x7f060001;
         public static final int app_name=0x7f060000;
-        public static final int button1=0x7f060003;
-        public static final int button2=0x7f060004;
-        public static final int button3=0x7f060005;
-        public static final int comment_placeholder=0x7f060007;
+        public static final int comment_placeholder=0x7f06000a;
         public static final int hello_world=0x7f060002;
-        public static final int key_edit_text_placeholder=0x7f060008;
-        public static final int sum_edit_placeholder=0x7f060006;
+        public static final int key_edit_text_placeholder=0x7f06000b;
+        public static final int save_button=0x7f060008;
+        public static final int shortcut_button1=0x7f060003;
+        public static final int shortcut_button2=0x7f060004;
+        public static final int shortcut_button3=0x7f060005;
+        public static final int shortcut_button4=0x7f060006;
+        public static final int sum_edit_placeholder=0x7f060009;
+        public static final int sync_button=0x7f060007;
     }
     public static final class style {
         /** 

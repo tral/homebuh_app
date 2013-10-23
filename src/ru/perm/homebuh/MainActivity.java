@@ -181,7 +181,8 @@ CompoundButton.OnCheckedChangeListener // For ToggleButtons
                         	long lastInsertId = dbHelper.insertExpense(cat_id, lSumVal, (String)mPickDate.getText(), mComment.getText().toString());
 
             	        	if (lastInsertId > 0) {
-            	        		MainActivity.this.ShowToast("Cохранено", Toast.LENGTH_SHORT);
+            	        		MainActivity.this.showSaveResult(lastInsertId);
+            	        		//MainActivity.this.ShowToast("Сохранено", Toast.LENGTH_SHORT);
             				}
             	        	
             	        	dbHelper.close();
@@ -263,7 +264,7 @@ CompoundButton.OnCheckedChangeListener // For ToggleButtons
 	protected void onResume() {
 	    super.onResume();
 	    this.setTodayDate();
-	    this.ShowToast("Установлена текущая дата", Toast.LENGTH_SHORT);
+	    //this.ShowToast("Установлена текущая дата", Toast.LENGTH_SHORT);
 	}
 	
 	
@@ -281,6 +282,30 @@ CompoundButton.OnCheckedChangeListener // For ToggleButtons
 		mSyncBtn.setText("Синхронизация (" + Integer.toString(mCur.getCount()) + ")");
      	mCur.close();
 		dbHelper.close();
+	}
+	
+	protected void showSaveResult(long id) {
+		
+		dbHelper = new DBHelper(this);
+     	SQLiteDatabase db = dbHelper.getWritableDatabase();
+     	
+     	String sqlQuery = "select d.val as val, c.name "
+     	        + "from data_ as d "
+     	        + "inner join category as c "
+     	        + "on c._id = d.cat_id "
+     	        + " WHERE d._id = " + Long.toString(id);
+     	
+     	Cursor mCur = db.rawQuery(sqlQuery, null);
+     	
+     	if (mCur.moveToFirst()) {
+     		int nameColIndex = mCur.getColumnIndex("name");
+ 	        int valColIndex = mCur.getColumnIndex("val");
+ 	        MainActivity.this.ShowToast(Integer.toString(mCur.getInt(valColIndex)) + " " + mCur.getString(nameColIndex), Toast.LENGTH_SHORT);
+     	} 
+     	
+     	mCur.close();
+		dbHelper.close();
+
 	}
 	
 	protected void updateLogLabel() {

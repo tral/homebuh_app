@@ -123,8 +123,6 @@ import android.database.sqlite.SQLiteOpenHelper;
               + "key_val text"
               + ");");
       
-      
-      
       // Договорились, что ключ хранится в таблице с _id=1
       cv.put("_id", 1);
       cv.put("key_val", "fake_secret_key");

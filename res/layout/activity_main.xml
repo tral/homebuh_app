@@ -112,7 +112,35 @@
             android:text="@string/sync_button" />
 
     </LinearLayout>
-
+ 
+ <!--
+ <RelativeLayout 
+ 	    android:id="@+id/linearLayoutMainBtns"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:layout_below="@+id/linearLayoutR2"
+	    android:orientation="horizontal"
+	    android:paddingLeft="0dp"
+	    android:paddingRight="0dp" >
+ 	
+ 	    <ImageButton android:id="@+id/syncBtn"
+			android:src="@drawable/share" 
+			android:layout_width="wrap_content"
+			android:layout_height="64dp"
+			android:layout_alignParentRight="true"
+			android:contentDescription="@string/sync_button"
+		 />
+ 	    
+ 	   <Button
+	       android:id="@+id/saveBtn"
+	       android:layout_width="fill_parent"
+	       android:layout_height="64dp"
+	       android:layout_alignParentLeft="true"
+	       android:text="@string/save_button"
+	       android:layout_toLeftOf="@id/syncBtn"
+        />
+ 	</RelativeLayout>
+-->
   <LinearLayout
         android:id="@+id/linearLayoutCat1"
         android:layout_width="fill_parent"

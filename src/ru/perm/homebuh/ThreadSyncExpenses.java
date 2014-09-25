@@ -29,12 +29,6 @@ public class ThreadSyncExpenses extends Thread {
     int mState;
 
     String mSecretKey;
-   
-    String[] mDate;
-    String[] mEt;
-    String[] mComment;
-    String[] mCat;
-    String[] mVal;
     
     DBHelper dbHelper;
     
@@ -208,12 +202,12 @@ public class ThreadSyncExpenses extends Thread {
         mSecretKey = key;
     }
     
-    public void setVars(String[] s_date, String[] s_et, String[] s_comment, String[] s_cat, String[] s_val) {
+    /*public void setVars(String[] s_date, String[] s_et, String[] s_comment, String[] s_cat, String[] s_val) {
         mDate = s_date;
         mEt = s_et;
         mComment = s_comment;
         mCat = s_cat;
         mVal =s_val; 
-    }
+    }*/
     
 }

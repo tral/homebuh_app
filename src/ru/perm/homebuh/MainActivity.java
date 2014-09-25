@@ -201,57 +201,30 @@ CompoundButton.OnCheckedChangeListener // For ToggleButtons
         mSyncBtn = (Button) findViewById(R.id.syncBtn);
         this.updateSyncLabel();
         mSyncBtn.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
+            
+        	public void onClick(View v) {
             	
             	dbHelper = new DBHelper(MainActivity.this);
             	SQLiteDatabase db = dbHelper.getWritableDatabase();
             	Cursor mCur = db.query("data_", null, null, null, null, null, "_id");
-            	 
-            	if (mCur.getCount() < 1) {
+            	long lExCnt = mCur.getCount();
+            	mCur.close();
+	        	dbHelper.close();
+	        	
+            	if (lExCnt < 1) {
             		MainActivity.this.ShowToast("Нет несинхронизированных расходов!", Toast.LENGTH_LONG);
             	} else {
             		
             		showDialog(SYNC_PROGRESS_DIALOG_ID);
-            		
-	            	String[] s=new String[100];
-	            	 
-	            	String[] s_date = new String[100];
-	            	String[] s_et = new String[100];
-	            	String[] s_comment = new String[100];
-	            	String[] s_cat = new String[100];
-	            	String[] s_val = new String[100];
-	            	 
-	            	int i=0;
-	            	 
-	            	if (mCur.moveToFirst()) {
-	
-	            		int dateColIndex = mCur.getColumnIndex("date_");
-	 	    	        int etColIndex = mCur.getColumnIndex("enter_time");
-	 	    	        int commentColIndex = mCur.getColumnIndex("comment");
-	 	    	        int catColIndex = mCur.getColumnIndex("cat_id");
-	 	    	        int valColIndex = mCur.getColumnIndex("val");
-	 	    	        
-	 	    	        do {
-	 	    	        	s_date[i] = mCur.getString(dateColIndex);
-	 	    	        	s_et[i] = mCur.getString(etColIndex);
-	 	    	        	s_comment[i] =mCur.getString(commentColIndex);
-	 	    	        	s_cat[i]=Integer.toString(mCur.getInt(catColIndex));
-	 	    	        	s_val[i]=Integer.toString(mCur.getInt(valColIndex));
-	 	    	        	i++;
-	 	    	        } while (mCur.moveToNext());
-	            	 } 
-	            	
+
 					mThreadSyncExpenses = new ThreadSyncExpenses(handlerSync, getApplicationContext());
 					mThreadSyncExpenses.setSecretKey(dbHelper.getSecretKey());
-					mThreadSyncExpenses.setVars(s_date, s_et, s_comment, s_cat, s_val);
+					//mThreadSyncExpenses.setVars(s_date, s_et, s_comment, s_cat, s_val);
 					mThreadSyncExpenses.setState(ThreadSyncExpenses.STATE_RUNNING);
 					mThreadSyncExpenses.start();
             	}
-				
-				mCur.close();
-	        	dbHelper.close();
-            	
             }
+            
         });
 
         // Фокус , чтобы показать сразу клавиатуру
@@ -437,7 +410,7 @@ CompoundButton.OnCheckedChangeListener // For ToggleButtons
 	        		SQLiteDatabase db = dbHelper.getWritableDatabase();
 	        		ContentValues cv = new ContentValues();
 	                cv.put("key_val", keyDlgEdit.getText().toString());
-	                int updCount = db.update("keys", cv, "_id = ?", new String[] { "1" });
+	                db.update("keys", cv, "_id = ?", new String[] { "1" });
 	                dbHelper.close();
 	                
 	                keyDlgEdit.setText(""); // Чистим чтобы не палить ключ

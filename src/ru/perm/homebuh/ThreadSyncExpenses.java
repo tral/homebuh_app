@@ -19,7 +19,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 
 public class ThreadSyncExpenses extends Thread {
 	
@@ -174,7 +173,7 @@ public class ThreadSyncExpenses extends Thread {
         nameValuePairs.add(new BasicNameValuePair("val", p_val));
         nameValuePairs.add(new BasicNameValuePair("hash", p_hash));
         
-        Log.d("hb", p_hash);
+        //Log.d("hb", p_hash);
         
         httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs,"UTF-8"));
         

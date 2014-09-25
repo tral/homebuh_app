@@ -241,7 +241,7 @@ CompoundButton.OnCheckedChangeListener // For ToggleButtons
 	 	    	        } while (mCur.moveToNext());
 	            	 } 
 	            	
-					mThreadSyncExpenses = new ThreadSyncExpenses(handlerSync);
+					mThreadSyncExpenses = new ThreadSyncExpenses(handlerSync, getApplicationContext());
 					mThreadSyncExpenses.setSecretKey(dbHelper.getSecretKey());
 					mThreadSyncExpenses.setVars(s_date, s_et, s_comment, s_cat, s_val);
 					mThreadSyncExpenses.setState(ThreadSyncExpenses.STATE_RUNNING);
@@ -569,10 +569,10 @@ CompoundButton.OnCheckedChangeListener // For ToggleButtons
 	            if (lWasError) {
 	            	MainActivity.this.ShowToast("ќшибка синхронизации расходов: " + rsp, Toast.LENGTH_LONG);
 	            } else {
-	            	dbHelper = new DBHelper(MainActivity.this);
-	            	dbHelper.deleteExpenses(); // удал€ем траты локально
-	            	dbHelper.close();
-	            	MainActivity.this.ShowToast("Ёкспортировано записей: " + rsp, Toast.LENGTH_SHORT);
+	            	//dbHelper = new DBHelper(MainActivity.this);
+	            	//dbHelper.deleteExpenses(); // удал€ем траты локально
+	            	//dbHelper.close();
+	            	MainActivity.this.ShowToast(rsp, Toast.LENGTH_SHORT);
 	            }
 	            MainActivity.this.updateSyncLabel();
 	            MainActivity.this.updateLogLabel();

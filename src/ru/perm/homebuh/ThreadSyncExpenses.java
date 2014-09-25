@@ -13,13 +13,18 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 
+import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 
 public class ThreadSyncExpenses extends Thread {
 	
     Handler mHandler;
+    Context mContext;
     final static int STATE_DONE = 0;
     final static int STATE_RUNNING = 1;
     int mState;
@@ -32,9 +37,12 @@ public class ThreadSyncExpenses extends Thread {
     String[] mCat;
     String[] mVal;
     
+    DBHelper dbHelper;
+    
    
-    ThreadSyncExpenses(Handler h) {
+    ThreadSyncExpenses(Handler h, Context context) {
         mHandler = h;
+        mContext = context;
     }
    
     public void run() {
@@ -43,6 +51,7 @@ public class ThreadSyncExpenses extends Thread {
 
         Boolean lWasError = false;
         int rowsInserted = 0;
+        int rowsDeleted = 0;
         
         
         if (mState == STATE_RUNNING) {
@@ -51,6 +60,65 @@ public class ThreadSyncExpenses extends Thread {
         	String tmp = "";
         	
         	try {
+        		/* --- */
+        		dbHelper = new DBHelper(mContext);
+        		SQLiteDatabase db = dbHelper.getWritableDatabase();
+            	Cursor mCur = db.query("data_", null, null, null, null, null, "_id");
+            	 
+            	if (mCur.moveToFirst()) {
+            		
+            		int idColIndex = mCur.getColumnIndex("_id");
+            		int dateColIndex = mCur.getColumnIndex("date_");
+ 	    	        int etColIndex = mCur.getColumnIndex("enter_time");
+ 	    	        int commentColIndex = mCur.getColumnIndex("comment");
+ 	    	        int catColIndex = mCur.getColumnIndex("cat_id");
+ 	    	        int valColIndex = mCur.getColumnIndex("val");
+ 	    	        int hashColIndex = mCur.getColumnIndex("hash");
+ 	    	        
+ 	    	        do {
+ 	    	        	
+ 	    	        	tmp = this.Go(mCur.getString(dateColIndex), 
+ 	    	        			mCur.getString(etColIndex),  
+ 	    	        			mCur.getString(commentColIndex), 
+ 	    	        			Integer.toString(mCur.getInt(catColIndex)), 
+ 	    	        			Integer.toString(mCur.getInt(valColIndex)),
+ 	    	        			mCur.getString(hashColIndex));
+        				
+       					if (tmp.equalsIgnoreCase("ok")) {
+        					// Удаляем запись локально только если получено подтверждение ее вставки на сервере
+        					// Если подтверждение не пришло - попробуем в следующий раз вставить, если уже была 
+        					// вставлена - придет ALREADY_EXISTS
+        					dbHelper.deleteExpense(Integer.toString(mCur.getInt(idColIndex)));
+        					rowsInserted++;       						
+        				} else if (tmp.equalsIgnoreCase("ALREADY_EXISTS")) {
+        					dbHelper.deleteExpense(Integer.toString(mCur.getInt(idColIndex)));
+        					rowsDeleted++;
+        				} else {
+        					// Если пришло что-то левое, запись не удаляем, счетчик вставленных не увеличиваем
+        				}
+ 	    	        	/*s_date[i] = mCur.getString(dateColIndex);
+ 	    	        	s_et[i] = mCur.getString(etColIndex);
+ 	    	        	s_comment[i] =mCur.getString(commentColIndex);
+ 	    	        	s_cat[i]=Integer.toString(mCur.getInt(catColIndex));
+ 	    	        	s_val[i]=Integer.toString(mCur.getInt(valColIndex));*/
+ 	    	        	//i++;
+ 	    	        } while (mCur.moveToNext());
+ 	    	        
+            	 }
+            	
+            	// Если неверный ключ синхронизации - то все ответы будут такие, включая последний.
+            	// Поэтому можно анализировать только его
+            	if (tmp.equalsIgnoreCase("WRONG_SECRET_KEY")) {
+            		result = "Неверный секретный ключ синхронизации!";
+            	} else {
+            		result = "Записано: " + Integer.toString(rowsInserted) + ", удалено: " + Integer.toString(rowsDeleted);	
+            	}
+        		
+            	mCur.close();
+        		dbHelper.close();
+        		
+        		/* --- */
+        		/*
         		for (int k=0; k<=mVal.length-1 ;k++) {
         			if (mVal[k]!= null) {
         				tmp = this.Go(mDate[k], mEt[k],  mComment[k], mCat[k], mVal[k]);
@@ -69,7 +137,7 @@ public class ThreadSyncExpenses extends Thread {
 				} else {
 					result = Integer.toString(rowsInserted);
 				}
-        		
+        		*/
         	}
 	        catch (Exception e) {
 	        	lWasError = true;
@@ -88,7 +156,7 @@ public class ThreadSyncExpenses extends Thread {
     }
     
     
-    public String Go(String p_date, String p_et, String p_comment, String p_cat, String p_val) {
+    public String Go(String p_date, String p_et, String p_comment, String p_cat, String p_val, String p_hash) {
     	
     	String url = "http://hb.perm.ru/android/saveexpense/key/"+mSecretKey;
     	String answer = "";
@@ -104,6 +172,9 @@ public class ThreadSyncExpenses extends Thread {
         nameValuePairs.add(new BasicNameValuePair("comment", p_comment));
         nameValuePairs.add(new BasicNameValuePair("cat", p_cat));
         nameValuePairs.add(new BasicNameValuePair("val", p_val));
+        nameValuePairs.add(new BasicNameValuePair("hash", p_hash));
+        
+        Log.d("hb", p_hash);
         
         httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs,"UTF-8"));
         
@@ -119,9 +190,6 @@ public class ThreadSyncExpenses extends Thread {
           }
           answer = sb.toString();
           answer = answer.replaceAll("(\\r|\\n)", "");
-            if (answer.equalsIgnoreCase("WRONG_SECRET_KEY")) {
-            	answer="Неверный секретный ключ синхронизации!";
-	          }
          }
         }
         catch (Exception e) {

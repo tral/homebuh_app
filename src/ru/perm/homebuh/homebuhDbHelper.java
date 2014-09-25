@@ -1,19 +1,20 @@
 package ru.perm.homebuh;
 
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Random;
 
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
   class DBHelper extends SQLiteOpenHelper {
 
     public DBHelper(Context context) {
       // конструктор суперкласса
-      super(context, "homebuhDB", null, 1);
+      super(context, "homebuhDB", null, 2);
     }
 
     // ¬ставл€ет расход (трату) денег
@@ -35,9 +36,19 @@ import android.database.sqlite.SQLiteOpenHelper;
         cv.put("enter_time", String.format("%02d", day)+"."+String.format("%02d", month)+"."+year+" "+hour+":"+min+":"+sec);
         cv.put("comment", comment);
         cv.put("cat_id", cat_id);
+        
         cv.put("val", val);
         long rowID = db.insert("data_", null, cv);
-		
+
+        // hash
+        cv.clear();
+        String lHash = Long.toString(rowID) + "_" + randomString();
+        cv.put("hash", lHash);
+        
+        Log.d("hb", lHash);
+        
+	    db.update("data_", cv, "_id = ?", new String[] { Long.toString(rowID) });
+        
 		return rowID;
     			
     }
@@ -66,10 +77,33 @@ import android.database.sqlite.SQLiteOpenHelper;
     }
     
     // ”дал€ет все расходы
-    public long deleteExpenses() {
+    //public long deleteExpenses() {
+    //	SQLiteDatabase db = this.getWritableDatabase();
+	//	long delCount  = db.delete("data_", null, null);
+	//	return delCount;
+    //}
+    
+    public static String randomString() {
+        Random generator = new Random();
+        StringBuilder randomStringBuilder = new StringBuilder();
+        int randomLength = 32; //generator.nextInt(MAX_LENGTH);
+        char tempChar;
+        for (int i = 0; i < randomLength; i++){
+            tempChar = (char) (generator.nextInt(96) + 32);
+            randomStringBuilder.append(tempChar);
+        }
+        return randomStringBuilder.toString();
+    }
+    
+    public void deleteExpense(String id) {
+    	
     	SQLiteDatabase db = this.getWritableDatabase();
-		long delCount  = db.delete("data_", null, null);
-		return delCount;
+    	
+    	String where = "_id = ?";
+    	String[] whereArgs = {id};
+    	
+    	db.delete("data_", where, whereArgs);
+    	
     }
     
     public String getSecretKey() {
@@ -128,10 +162,21 @@ import android.database.sqlite.SQLiteOpenHelper;
       cv.put("key_val", "fake_secret_key");
       db.insert("keys", null, cv);  
       
+      Upgrade_1_to_2(db);
+      
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
+    	if (oldVersion <= 1) {
+    		Upgrade_1_to_2(db);
+    	}
     }
+    
+    
+   public void Upgrade_1_to_2(SQLiteDatabase db) {
+    	String upgradeQuery = "ALTER TABLE data_ ADD COLUMN hash TEXT";
+    	db.execSQL(upgradeQuery);
+    };
+    
   }

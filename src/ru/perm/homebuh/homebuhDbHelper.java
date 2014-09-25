@@ -8,7 +8,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
   class DBHelper extends SQLiteOpenHelper {
 
@@ -45,7 +44,7 @@ import android.util.Log;
         String lHash = Long.toString(rowID) + "_" + randomString();
         cv.put("hash", lHash);
         
-        Log.d("hb", lHash);
+        //Log.d("hb", lHash);
         
 	    db.update("data_", cv, "_id = ?", new String[] { Long.toString(rowID) });
         

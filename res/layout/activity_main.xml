@@ -13,7 +13,9 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:orientation="horizontal" >
+        android:orientation="horizontal" 
+        android:layout_marginTop="0dp" 
+        >
         
 	    <EditText
 	        android:id="@+id/editText1"

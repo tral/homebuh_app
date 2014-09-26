@@ -81,8 +81,20 @@ import android.database.sqlite.SQLiteOpenHelper;
 	//	long delCount  = db.delete("data_", null, null);
 	//	return delCount;
     //}
-    
+
     public static String randomString() {
+    	
+    	final String alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefjhijklmnopqrstuvwxyz1234567890!@#$%_)(*^;:+-[],.";
+    	final int N = alphabet.length();
+    	Random rd = new Random();
+    	int iLength = 32;
+    	StringBuilder sb = new StringBuilder(iLength);
+    	for (int i = 0; i < iLength; i++) {
+    	    sb.append(alphabet.charAt(rd.nextInt(N)));
+    	}
+    	return sb.toString();
+    	
+    	/*
         Random generator = new Random();
         StringBuilder randomStringBuilder = new StringBuilder();
         int randomLength = 32; //generator.nextInt(MAX_LENGTH);
@@ -91,7 +103,7 @@ import android.database.sqlite.SQLiteOpenHelper;
             tempChar = (char) (generator.nextInt(96) + 32);
             randomStringBuilder.append(tempChar);
         }
-        return randomStringBuilder.toString();
+        return randomStringBuilder.toString();*/
     }
     
     public void deleteExpense(String id) {

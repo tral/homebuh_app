@@ -1,0 +1,21 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+
+
+    <item android:id="@+id/action_sync"
+        android:icon="@drawable/ic_sync"
+        android:title="@string/menu_sync"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/badge"
+        android:actionLayout="@layout/items_to_sync_count"
+        android:icon="@xml/shape_notification"
+        android:title="@string/info_sync_cnt"
+        app:showAsAction="always">
+    </item>
+
+</menu>
+
+

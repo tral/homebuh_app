@@ -42,4 +42,6 @@
     <string name="menu_enter_key">Ввести ключ синхронизации</string>
     <string name="menu_sync">Сихронизация</string>
 
+    <string name="drawer_item_home">Внести расходы</string>
+
 </resources>

@@ -14,6 +14,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -38,6 +39,11 @@ import com.mikepenz.actionitembadge.library.ActionItemBadge;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
 import com.mikepenz.iconics.typeface.FontAwesome;
+import com.mikepenz.materialdrawer.Drawer;
+import com.mikepenz.materialdrawer.model.IDrawerItem;
+import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
+import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
+import com.mikepenz.materialdrawer.model.SectionDrawerItem;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -97,6 +103,8 @@ public class MainActivity extends ActionBarActivity
     // Comment
     EditText mComment;
     TextView mLog;
+
+    private Drawer.Result drawerResult = null;
 
     private void setTodayDate() {
         final Calendar c = Calendar.getInstance();
@@ -164,6 +172,56 @@ public class MainActivity extends ActionBarActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
+        // Handle Toolbar
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        drawerResult = new Drawer()
+                .withActivity(this)
+                .withToolbar(toolbar)
+                .withActionBarDrawerToggle(true)
+                .withHeader(R.layout.drawer_header)
+                .addDrawerItems(
+                        new PrimaryDrawerItem().withName(R.string.drawer_item_home).withIcon(FontAwesome.Icon.faw_home).withBadge("99").withIdentifier(1),
+                        new PrimaryDrawerItem().withName(R.string.drawer_item_home).withIcon(FontAwesome.Icon.faw_gamepad),
+                        new PrimaryDrawerItem().withName(R.string.drawer_item_home).withIcon(FontAwesome.Icon.faw_eye).withBadge("6").withIdentifier(2),
+                        new SectionDrawerItem().withName(R.string.drawer_item_home),
+                        new SecondaryDrawerItem().withName(R.string.drawer_item_home).withIcon(FontAwesome.Icon.faw_cog),
+                        new SecondaryDrawerItem().withName(R.string.drawer_item_home).withIcon(FontAwesome.Icon.faw_question).setEnabled(false),
+                        new SecondaryDrawerItem().withName(R.string.drawer_item_home).withIcon(FontAwesome.Icon.faw_github).withBadge("12+").withIdentifier(1),
+                        new SecondaryDrawerItem().withName(R.string.drawer_item_home).withIcon(FontAwesome.Icon.faw_bullhorn)
+                )
+                .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id, IDrawerItem drawerItem) {
+                        if (drawerItem instanceof PrimaryDrawerItem) {
+                            PrimaryDrawerItem di = (PrimaryDrawerItem) drawerItem;
+
+                            Toast.makeText(MainActivity.this, MainActivity.this.getString(di.getNameRes()), Toast.LENGTH_SHORT).show();
+
+                            if (di.getBadge() != null) {
+                                //note don't do this if your badge contains a "+"
+                                int badge = Integer.valueOf(di.getBadge());
+                                if (badge > 0) {
+                                    di.withBadge(String.valueOf(badge - 1));
+                                    drawerResult.updateItem(di);
+                                }
+                            }
+                        }
+                    }
+                })
+                .withOnDrawerItemLongClickListener(new Drawer.OnDrawerItemLongClickListener() {
+                    @Override
+                    public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id, IDrawerItem drawerItem) {
+                        if (drawerItem instanceof SecondaryDrawerItem) {
+                            Toast.makeText(MainActivity.this, MainActivity.this.getString(((SecondaryDrawerItem) drawerItem).getNameRes()), Toast.LENGTH_SHORT).show();
+                        }
+                        return false;
+                    }
+                }).build();
 
         // Date
         mPickDate = (Button) findViewById(R.id.dateBtn);

@@ -2,176 +2,207 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".MainActivity">
-
-    <RelativeLayout
-        android:id="@+id/linearLayoutSum"
-        android:layout_width="fill_parent"
+    <!--
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin"
+        -->
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:orientation="horizontal">
+        android:background="?attr/colorPrimary"
+        android:elevation="4dp"
+        android:minHeight="?attr/actionBarSize"
+        android:paddingTop="@dimen/tool_bar_top_padding"
+        android:transitionName="actionBar"
 
-        <ImageButton
-            android:id="@+id/save_new"
-            android:layout_width="wrap_content"
-            android:layout_height="54dp"
-            android:layout_alignParentLeft="true"
-            android:adjustViewBounds="true"
-            android:contentDescription="@string/save_button"
-            android:onClick="saveItem"
-            android:scaleType="fitCenter"
-            android:src="@drawable/ic_action_save_light" />
+        />
 
-        <EditText
-            android:id="@+id/editText1"
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_below="@+id/toolbar">
+
+        <LinearLayout
+            android:id="@+id/scrollContainer"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_toRightOf="@id/save_new"
-            android:hint="@string/sum_edit_placeholder"
-            android:inputType="number"
-            android:lines="@integer/lines_per_input_1"
-            android:maxLength="6"
-            android:maxLines="@integer/lines_per_input_1"
-            android:selectAllOnFocus="true">
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:orientation="vertical">
 
-            <requestFocus />
-        </EditText>
+            <RelativeLayout
+                android:id="@+id/linearLayoutSum"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/scrollContainer"
 
-    </RelativeLayout>
+                android:orientation="horizontal">
 
-    <LinearLayout
-        android:id="@+id/linearLayoutR1"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/linearLayoutSum"
-        android:orientation="horizontal">
+                <ImageButton
+                    android:id="@+id/save_new"
+                    android:layout_width="wrap_content"
+                    android:layout_height="54dp"
+                    android:layout_alignParentLeft="true"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="@string/save_button"
+                    android:onClick="saveItem"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ic_action_save_light" />
 
-        <ToggleButton
-            android:id="@+id/toggleButton1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/shortcut_button1"
-            android:textOff="@string/shortcut_button1"
-            android:textOn="@string/shortcut_button1" />
+                <EditText
+                    android:id="@+id/editText1"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_toRightOf="@id/save_new"
+                    android:hint="@string/sum_edit_placeholder"
+                    android:inputType="number"
+                    android:lines="@integer/lines_per_input_1"
+                    android:maxLength="6"
+                    android:maxLines="@integer/lines_per_input_1"
+                    android:selectAllOnFocus="true">
 
-        <ToggleButton
-            android:id="@+id/toggleButton3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/shortcut_button3"
-            android:textOff="@string/shortcut_button3"
-            android:textOn="@string/shortcut_button3" />
+                    <requestFocus />
+                </EditText>
 
-    </LinearLayout>
+            </RelativeLayout>
 
-    <LinearLayout
-        android:id="@+id/linearLayoutR2"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/linearLayoutR1"
-        android:orientation="horizontal">
+            <LinearLayout
+                android:id="@+id/linearLayoutR1"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/linearLayoutSum"
+                android:orientation="horizontal">
 
-        <ToggleButton
-            android:id="@+id/toggleButton2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/shortcut_button2"
-            android:textOff="@string/shortcut_button2"
-            android:textOn="@string/shortcut_button2" />
+                <ToggleButton
+                    android:id="@+id/toggleButton1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/shortcut_button1"
+                    android:textOff="@string/shortcut_button1"
+                    android:textOn="@string/shortcut_button1" />
 
-        <ToggleButton
-            android:id="@+id/toggleButton4"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/shortcut_button4"
-            android:textOff="@string/shortcut_button4"
-            android:textOn="@string/shortcut_button4" />
+                <ToggleButton
+                    android:id="@+id/toggleButton3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/shortcut_button3"
+                    android:textOff="@string/shortcut_button3"
+                    android:textOn="@string/shortcut_button3" />
 
-    </LinearLayout>
+            </LinearLayout>
 
+            <LinearLayout
+                android:id="@+id/linearLayoutR2"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/linearLayoutR1"
+                android:orientation="horizontal">
 
-    <LinearLayout
-        android:id="@+id/linearLayoutCat1"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/linearLayoutR2"
-        android:orientation="horizontal">
+                <ToggleButton
+                    android:id="@+id/toggleButton2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/shortcut_button2"
+                    android:textOff="@string/shortcut_button2"
+                    android:textOn="@string/shortcut_button2" />
 
-        <Spinner
-            android:id="@+id/spinnerCat1"
-            android:layout_width="0dip"
+                <ToggleButton
+                    android:id="@+id/toggleButton4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/shortcut_button4"
+                    android:textOff="@string/shortcut_button4"
+                    android:textOn="@string/shortcut_button4" />
 
-            android:layout_height="32dp"
-            android:layout_weight="1" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/linearLayoutCat2"
-        android:layout_width="fill_parent"
-        android:layout_height="32dp"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/linearLayoutCat1"
-        android:orientation="horizontal">
-
-        <Spinner
-            android:id="@+id/spinnerCat2"
-            android:layout_width="0dip"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" />
-
-    </LinearLayout>
+            </LinearLayout>
 
 
-    <LinearLayout
-        android:id="@+id/linearLayoutDate"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/linearLayoutCat2"
-        android:orientation="horizontal">
+            <LinearLayout
+                android:id="@+id/linearLayoutCat1"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/linearLayoutR2"
+                android:orientation="horizontal">
 
-        <EditText
-            android:id="@+id/editText2"
-            android:layout_width="0dip"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:ems="10"
-            android:hint="@string/comment_placeholder" />
+                <Spinner
+                    android:id="@+id/spinnerCat1"
+                    android:layout_width="0dip"
 
-        <Button
-            android:id="@+id/dateBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+                    android:layout_height="32dp"
+                    android:layout_weight="1" />
 
-    </LinearLayout>
+            </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/linearLayoutLog"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/linearLayoutDate"
-        android:orientation="horizontal">
+            <LinearLayout
+                android:id="@+id/linearLayoutCat2"
+                android:layout_width="fill_parent"
+                android:layout_height="32dp"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/linearLayoutCat1"
+                android:orientation="horizontal">
 
-        <TextView
-            android:id="@+id/textViewLog"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="" />
+                <Spinner
+                    android:id="@+id/spinnerCat2"
+                    android:layout_width="0dip"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
 
-    </LinearLayout>
+            </LinearLayout>
 
+
+            <LinearLayout
+                android:id="@+id/linearLayoutDate"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/linearLayoutCat2"
+                android:orientation="horizontal">
+
+                <EditText
+                    android:id="@+id/editText2"
+                    android:layout_width="0dip"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:ems="10"
+                    android:hint="@string/comment_placeholder" />
+
+                <Button
+                    android:id="@+id/dateBtn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/linearLayoutLog"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/linearLayoutDate"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/textViewLog"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:text="" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
 </RelativeLayout>

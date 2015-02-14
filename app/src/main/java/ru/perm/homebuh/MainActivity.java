@@ -8,6 +8,7 @@ import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -26,11 +27,16 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
+
+import com.mikepenz.actionitembadge.library.ActionItemBadge;
+import com.mikepenz.iconics.IconicsDrawable;
+import com.mikepenz.iconics.typeface.FontAwesome;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -414,17 +420,13 @@ public class MainActivity extends ActionBarActivity
     // Menu
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        //getMenuInflater().inflate(R.menu.main, menu);
-        //return true;
+
+        getMenuInflater().inflate(R.menu.main, menu);
 
         if (mNotifCount > 0) {
-            MenuInflater inflater = getMenuInflater();
-            inflater.inflate(R.menu.main, menu);
-            MenuItem item = menu.findItem(R.id.badge);
-            MenuItemCompat.setActionView(item, R.layout.items_to_sync_count);
-            mNotifCountBtn = (Button) MenuItemCompat.getActionView(item);
-            mNotifCountBtn.setText(String.valueOf(mNotifCount));
+            ActionItemBadge.update(this, menu.findItem(R.id.action_sync), new IconicsDrawable(this, FontAwesome.Icon.faw_refresh).color(Color.BLACK).actionBarSize(), ActionItemBadge.BadgeStyle.YELLOW, mNotifCount);
+        } else {
+            ActionItemBadge.hide(menu.findItem(R.id.action_sync));
         }
 
         menu.add(Menu.NONE, IDM_UPDATE_CATEGORIES, Menu.NONE, getResources().getString(R.string.menu_update_cats));

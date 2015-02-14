@@ -5,9 +5,11 @@
 
     <item android:id="@+id/action_sync"
         android:icon="@drawable/ic_sync"
+        app:actionLayout="@layout/menu_badge"
         android:title="@string/menu_sync"
         app:showAsAction="always" />
 
+    <!--
     <item
         android:id="@+id/badge"
         android:actionLayout="@layout/items_to_sync_count"
@@ -15,7 +17,7 @@
         android:title="@string/info_sync_cnt"
         app:showAsAction="always">
     </item>
-
+-->
 </menu>
 
 

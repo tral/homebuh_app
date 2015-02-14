@@ -35,6 +35,7 @@ import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.mikepenz.actionitembadge.library.ActionItemBadge;
+import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
 import com.mikepenz.iconics.typeface.FontAwesome;
 
@@ -424,7 +425,7 @@ public class MainActivity extends ActionBarActivity
         getMenuInflater().inflate(R.menu.main, menu);
 
         if (mNotifCount > 0) {
-            ActionItemBadge.update(this, menu.findItem(R.id.action_sync), new IconicsDrawable(this, FontAwesome.Icon.faw_refresh).color(Color.BLACK).actionBarSize(), ActionItemBadge.BadgeStyle.YELLOW, mNotifCount);
+            ActionItemBadge.update(this, menu.findItem(R.id.action_sync), new IconicsDrawable(this, GoogleMaterial.Icon.gmd_sync).color(Color.BLACK).actionBarSize(), ActionItemBadge.BadgeStyle.YELLOW, mNotifCount);
         } else {
             ActionItemBadge.hide(menu.findItem(R.id.action_sync));
         }

@@ -1,5 +1,6 @@
 package ru.perm.homebuh;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
@@ -12,23 +13,21 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -40,10 +39,12 @@ import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
 import com.mikepenz.iconics.typeface.FontAwesome;
 import com.mikepenz.materialdrawer.Drawer;
-import com.mikepenz.materialdrawer.model.IDrawerItem;
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
 import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
 import com.mikepenz.materialdrawer.model.SectionDrawerItem;
+import com.mikepenz.materialdrawer.model.interfaces.Badgeable;
+import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
+import com.mikepenz.materialdrawer.model.interfaces.Nameable;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -97,14 +98,19 @@ public class MainActivity extends ActionBarActivity
     ToggleButton tb4;
 
     // Buttons
-    Button mNotifCountBtn;
     int mNotifCount = 0;
+    boolean mIsDrawerOpened = false;
 
     // Comment
     EditText mComment;
     TextView mLog;
 
     private Drawer.Result drawerResult = null;
+
+    public static void hideSoftKeyboard(Activity activity) {
+        InputMethodManager inputMethodManager = (InputMethodManager)  activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
+    }
 
     private void setTodayDate() {
         final Calendar c = Calendar.getInstance();
@@ -168,6 +174,20 @@ public class MainActivity extends ActionBarActivity
         }
     }
 
+    protected boolean isDrawerOpen() {
+        return mIsDrawerOpened;
+    }
+
+    @Override
+    public void onBackPressed(){
+        if(isDrawerOpen()){
+            drawerResult.closeDrawer();
+        }
+        else{
+            super.onBackPressed();
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -194,20 +214,39 @@ public class MainActivity extends ActionBarActivity
                         new SecondaryDrawerItem().withName(R.string.drawer_item_home).withIcon(FontAwesome.Icon.faw_github).withBadge("12+").withIdentifier(1),
                         new SecondaryDrawerItem().withName(R.string.drawer_item_home).withIcon(FontAwesome.Icon.faw_bullhorn)
                 )
+                .withOnDrawerListener(new Drawer.OnDrawerListener() {
+                    @Override
+                    public boolean equals(Object o) {
+                        return super.equals(o);
+                    }
+
+                    @Override
+                    public void onDrawerOpened(View drawerView) {
+                        //Toast.makeText(MainActivity.this, "onDrawerOpened", Toast.LENGTH_SHORT).show();
+                        hideSoftKeyboard(MainActivity.this);
+                        mIsDrawerOpened = true;
+                    }
+
+                    @Override
+                    public void onDrawerClosed(View drawerView) {
+                        mIsDrawerOpened = false;
+                        //Toast.makeText(MainActivity.this, "onDrawerClosed", Toast.LENGTH_SHORT).show();
+                    }
+                })
                 .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id, IDrawerItem drawerItem) {
-                        if (drawerItem instanceof PrimaryDrawerItem) {
-                            PrimaryDrawerItem di = (PrimaryDrawerItem) drawerItem;
+                        if (drawerItem instanceof Nameable) {
+                            Toast.makeText(MainActivity.this, MainActivity.this.getString(((Nameable) drawerItem).getNameRes()), Toast.LENGTH_SHORT).show();
+                        }
 
-                            Toast.makeText(MainActivity.this, MainActivity.this.getString(di.getNameRes()), Toast.LENGTH_SHORT).show();
-
-                            if (di.getBadge() != null) {
+                        if (drawerItem instanceof Badgeable) {
+                            Badgeable badgeable = (Badgeable) drawerItem;
+                            if (badgeable.getBadge() != null) {
                                 //note don't do this if your badge contains a "+"
-                                int badge = Integer.valueOf(di.getBadge());
+                                int badge = Integer.valueOf(badgeable.getBadge());
                                 if (badge > 0) {
-                                    di.withBadge(String.valueOf(badge - 1));
-                                    drawerResult.updateItem(di);
+                                    drawerResult.updateBadge(String.valueOf(badge - 1), position);
                                 }
                             }
                         }

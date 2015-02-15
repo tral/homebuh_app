@@ -99,7 +99,6 @@ public class MainActivity extends ActionBarActivity
 
     // Buttons
     int mNotifCount = 0;
-    boolean mIsDrawerOpened = false;
 
     // Comment
     EditText mComment;
@@ -174,13 +173,9 @@ public class MainActivity extends ActionBarActivity
         }
     }
 
-    protected boolean isDrawerOpen() {
-        return mIsDrawerOpened;
-    }
-
     @Override
     public void onBackPressed(){
-        if(isDrawerOpen()){
+        if(drawerResult.isDrawerOpen()){
             drawerResult.closeDrawer();
         }
         else{
@@ -224,12 +219,10 @@ public class MainActivity extends ActionBarActivity
                     public void onDrawerOpened(View drawerView) {
                         //Toast.makeText(MainActivity.this, "onDrawerOpened", Toast.LENGTH_SHORT).show();
                         hideSoftKeyboard(MainActivity.this);
-                        mIsDrawerOpened = true;
                     }
 
                     @Override
                     public void onDrawerClosed(View drawerView) {
-                        mIsDrawerOpened = false;
                         //Toast.makeText(MainActivity.this, "onDrawerClosed", Toast.LENGTH_SHORT).show();
                     }
                 })

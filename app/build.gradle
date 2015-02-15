@@ -24,7 +24,7 @@ dependencies {
         transitive = true
     }
     compile 'com.mikepenz.iconics:google-material-typeface:+@aar'
-    compile('com.mikepenz.materialdrawer:library:0.9.4@aar') {
+    compile('com.mikepenz.materialdrawer:library:0.9.5@aar') {
         transitive = true
     }
 }

@@ -207,8 +207,17 @@ public class MainActivity extends ActionBarActivity
                         new SecondaryDrawerItem().withName(R.string.drawer_item_home).withIcon(FontAwesome.Icon.faw_cog),
                         new SecondaryDrawerItem().withName(R.string.drawer_item_home).withIcon(FontAwesome.Icon.faw_question).setEnabled(false),
                         new SecondaryDrawerItem().withName(R.string.drawer_item_home).withIcon(FontAwesome.Icon.faw_github).withBadge("12+").withIdentifier(1),
+                        new SecondaryDrawerItem().withName(R.string.drawer_item_home).withIcon(FontAwesome.Icon.faw_github).withBadge("12+").withIdentifier(1),
+                        new SecondaryDrawerItem().withName(R.string.drawer_item_home).withIcon(FontAwesome.Icon.faw_github).withBadge("12+").withIdentifier(1),
+                        new SecondaryDrawerItem().withName(R.string.drawer_item_home).withIcon(FontAwesome.Icon.faw_github).withBadge("12+").withIdentifier(1),
+                        new SecondaryDrawerItem().withName(R.string.drawer_item_home).withIcon(FontAwesome.Icon.faw_github).withBadge("12+").withIdentifier(1),
+                        new SecondaryDrawerItem().withName(R.string.drawer_item_home).withIcon(FontAwesome.Icon.faw_github).withBadge("12+").withIdentifier(1),
+                        new SecondaryDrawerItem().withName(R.string.drawer_item_home).withIcon(FontAwesome.Icon.faw_github).withBadge("12+").withIdentifier(1),
+                        new SecondaryDrawerItem().withName(R.string.drawer_item_home).withIcon(FontAwesome.Icon.faw_github).withBadge("12+").withIdentifier(1),
+                        new SecondaryDrawerItem().withName(R.string.drawer_item_home).withIcon(FontAwesome.Icon.faw_github).withBadge("12+").withIdentifier(1),
                         new SecondaryDrawerItem().withName(R.string.drawer_item_home).withIcon(FontAwesome.Icon.faw_bullhorn)
                 )
+
                 .withOnDrawerListener(new Drawer.OnDrawerListener() {
                     @Override
                     public boolean equals(Object o) {

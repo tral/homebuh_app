@@ -12,6 +12,8 @@
 
         <item name="android:colorButtonNormal">@color/lolli_btn</item>
 
+        <item name="android:navigationBarColor">@color/lolli_primary</item>
+
         <!-- for navigation drawer -->
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
         <item name="android:statusBarColor">@android:color/transparent</item>

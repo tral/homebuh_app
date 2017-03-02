@@ -81,11 +81,9 @@ class DBHelper extends SQLiteOpenHelper {
         return sb.toString();
     }
 
-    public void deleteExpense(String id) {
+    public void deleteExpenses() {
         SQLiteDatabase db = this.getWritableDatabase();
-        String where = "_id = ?";
-        String[] whereArgs = {id};
-        db.delete("data_", where, whereArgs);
+        db.delete("data_", null, null);
     }
 
     public String getSecretKey() {

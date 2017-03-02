@@ -37,14 +37,6 @@ import android.widget.ToggleButton;
 import com.mikepenz.actionitembadge.library.ActionItemBadge;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
-import com.mikepenz.iconics.typeface.FontAwesome;
-import com.mikepenz.materialdrawer.Drawer;
-import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
-import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
-import com.mikepenz.materialdrawer.model.SectionDrawerItem;
-import com.mikepenz.materialdrawer.model.interfaces.Badgeable;
-import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
-import com.mikepenz.materialdrawer.model.interfaces.Nameable;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -96,6 +88,8 @@ public class MainActivity extends ActionBarActivity
     ToggleButton tb2;
     ToggleButton tb3;
     ToggleButton tb4;
+    ToggleButton tb5;
+    ToggleButton tb6;
 
     // Buttons
     int mNotifCount = 0;
@@ -104,10 +98,10 @@ public class MainActivity extends ActionBarActivity
     EditText mComment;
     TextView mLog;
 
-    private Drawer.Result drawerResult = null;
+    //private Drawer.Result drawerResult = null;
 
     public static void hideSoftKeyboard(Activity activity) {
-        InputMethodManager inputMethodManager = (InputMethodManager)  activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        InputMethodManager inputMethodManager = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
         inputMethodManager.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
     }
 
@@ -141,7 +135,7 @@ public class MainActivity extends ActionBarActivity
             MainActivity.this.ShowToast(getResources().getString(R.string.err_enter_amount), Toast.LENGTH_LONG);
         else if (spn2.getCount() < 1)
             MainActivity.this.ShowToast(getResources().getString(R.string.err_load_cats), Toast.LENGTH_LONG);
-        else if (spn2.getSelectedItemId() < 1 && !tb1.isChecked() && !tb2.isChecked() && !tb3.isChecked() && !tb4.isChecked())
+        else if (spn2.getSelectedItemId() < 1 && !tb1.isChecked() && !tb2.isChecked() && !tb3.isChecked() && !tb4.isChecked() && !tb5.isChecked() && !tb6.isChecked())
             MainActivity.this.ShowToast(getResources().getString(R.string.err_choose_cat), Toast.LENGTH_LONG);
         else {
 
@@ -152,6 +146,8 @@ public class MainActivity extends ActionBarActivity
             if (tb2.isChecked()) cat_id = 52;
             if (tb3.isChecked()) cat_id = 88;
             if (tb4.isChecked()) cat_id = 123;
+            if (tb5.isChecked()) cat_id = 87;
+            if (tb6.isChecked()) cat_id = 69;
 
             dbHelper = new DBHelper(MainActivity.this);
 
@@ -172,7 +168,7 @@ public class MainActivity extends ActionBarActivity
             MainActivity.this.updateLogLabel();
         }
     }
-
+/*
     @Override
     public void onBackPressed(){
         if(drawerResult.isDrawerOpen()){
@@ -181,7 +177,7 @@ public class MainActivity extends ActionBarActivity
         else{
             super.onBackPressed();
         }
-    }
+    }*/
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -192,8 +188,8 @@ public class MainActivity extends ActionBarActivity
         // Handle Toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
+        //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+/*
         drawerResult = new Drawer()
                 .withActivity(this)
                 .withToolbar(toolbar)
@@ -263,7 +259,7 @@ public class MainActivity extends ActionBarActivity
                         return false;
                     }
                 }).build();
-
+*/
         // Date
         mPickDate = (Button) findViewById(R.id.dateBtn);
         this.setTodayDate();
@@ -280,10 +276,14 @@ public class MainActivity extends ActionBarActivity
         tb2 = (ToggleButton) findViewById(R.id.toggleButton2);
         tb3 = (ToggleButton) findViewById(R.id.toggleButton3);
         tb4 = (ToggleButton) findViewById(R.id.toggleButton4);
+        tb5 = (ToggleButton) findViewById(R.id.toggleButton5);
+        tb6 = (ToggleButton) findViewById(R.id.toggleButton6);
         tb1.setOnCheckedChangeListener(this);
         tb2.setOnCheckedChangeListener(this);
         tb3.setOnCheckedChangeListener(this);
         tb4.setOnCheckedChangeListener(this);
+        tb5.setOnCheckedChangeListener(this);
+        tb6.setOnCheckedChangeListener(this);
         spn1 = (Spinner) findViewById(R.id.spinnerCat1);
         spn1.setOnItemSelectedListener(this);
         spn2 = (Spinner) findViewById(R.id.spinnerCat2);
@@ -377,7 +377,7 @@ public class MainActivity extends ActionBarActivity
 
             do {
                 if (i > 0)
-                    mLog.append(", ");
+                    mLog.append("\n");
                 mLog.append(mCur.getString(nameColIndex) + " " + Integer.toString(mCur.getInt(valColIndex)));
                 i++;
             } while (mCur.moveToNext());
@@ -703,6 +703,10 @@ public class MainActivity extends ActionBarActivity
             tb3.setChecked(false);
         if (except_id != tb4.getId())
             tb4.setChecked(false);
+        if (except_id != tb5.getId())
+            tb5.setChecked(false);
+        if (except_id != tb6.getId())
+            tb6.setChecked(false);
     }
 
     @Override

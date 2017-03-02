@@ -82,6 +82,15 @@
                 android:orientation="horizontal">
 
                 <ToggleButton
+                    android:id="@+id/toggleButton5"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/shortcut_button5"
+                    android:textOff="@string/shortcut_button5"
+                    android:textOn="@string/shortcut_button5" />
+
+                <ToggleButton
                     android:id="@+id/toggleButton1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -90,14 +99,18 @@
                     android:textOff="@string/shortcut_button1"
                     android:textOn="@string/shortcut_button1" />
 
+
+
                 <ToggleButton
-                    android:id="@+id/toggleButton3"
+                    android:id="@+id/toggleButton4"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="@string/shortcut_button3"
-                    android:textOff="@string/shortcut_button3"
-                    android:textOn="@string/shortcut_button3" />
+                    android:text="@string/shortcut_button4"
+                    android:textOff="@string/shortcut_button4"
+                    android:textOn="@string/shortcut_button4" />
+
+
 
             </LinearLayout>
 
@@ -110,6 +123,15 @@
                 android:orientation="horizontal">
 
                 <ToggleButton
+                    android:id="@+id/toggleButton3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/shortcut_button3"
+                    android:textOff="@string/shortcut_button3"
+                    android:textOn="@string/shortcut_button3" />
+
+                <ToggleButton
                     android:id="@+id/toggleButton2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -119,13 +141,13 @@
                     android:textOn="@string/shortcut_button2" />
 
                 <ToggleButton
-                    android:id="@+id/toggleButton4"
+                    android:id="@+id/toggleButton6"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="@string/shortcut_button4"
-                    android:textOff="@string/shortcut_button4"
-                    android:textOn="@string/shortcut_button4" />
+                    android:text="@string/shortcut_button6"
+                    android:textOff="@string/shortcut_button6"
+                    android:textOn="@string/shortcut_button6" />
 
             </LinearLayout>
 

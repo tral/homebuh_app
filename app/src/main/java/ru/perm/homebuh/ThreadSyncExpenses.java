@@ -43,17 +43,13 @@ public class ThreadSyncExpenses extends Thread {
         mState = STATE_RUNNING;
 
         Boolean lWasError = false;
-        int rowsInserted = 0;
-        int rowsDeleted = 0;
-
 
         if (mState == STATE_RUNNING) {
 
             String result = "";
-            String tmp = "";
 
             try {
-                /* --- */
+
                 dbHelper = new DBHelper(mContext);
                 SQLiteDatabase db = dbHelper.getWritableDatabase();
                 Cursor mCur = db.query("data_", null, null, null, null, null, "_id");
@@ -68,39 +64,41 @@ public class ThreadSyncExpenses extends Thread {
                     int valColIndex = mCur.getColumnIndex("val");
                     int hashColIndex = mCur.getColumnIndex("hash");
 
+                    String url = "http://hb.perm.ru/android/saveexpense/key/" + mSecretKey;
+
+                    HttpClient httpClient = new DefaultHttpClient();
+                    HttpPost httppost = new HttpPost(url);
+                    List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+
                     do {
-
-                        tmp = this.Go(mCur.getString(dateColIndex),
-                                mCur.getString(etColIndex),
-                                mCur.getString(commentColIndex),
-                                Integer.toString(mCur.getInt(catColIndex)),
-                                Integer.toString(mCur.getInt(valColIndex)),
-                                mCur.getString(hashColIndex));
-
-                        if (tmp.equalsIgnoreCase("ok")) {
-                            // Удаляем запись локально только если получено подтверждение ее вставки на сервере
-                            // Если подтверждение не пришло - попробуем в следующий раз вставить, если уже была
-                            // вставлена - придет ALREADY_EXISTS
-                            dbHelper.deleteExpense(Integer.toString(mCur.getInt(idColIndex)));
-                            rowsInserted++;
-                        } else if (tmp.equalsIgnoreCase("ALREADY_EXISTS")) {
-                            dbHelper.deleteExpense(Integer.toString(mCur.getInt(idColIndex)));
-                            rowsDeleted++;
-                        } else {
-                            // Если пришло что-то левое, запись не удаляем, счетчик вставленных не увеличиваем
-                        }
-
+                        nameValuePairs.add(new BasicNameValuePair("date[]", mCur.getString(dateColIndex)));
+                        nameValuePairs.add(new BasicNameValuePair("et[]", mCur.getString(etColIndex)));
+                        nameValuePairs.add(new BasicNameValuePair("comment[]", mCur.getString(commentColIndex)));
+                        nameValuePairs.add(new BasicNameValuePair("cat[]", Integer.toString(mCur.getInt(catColIndex))));
+                        nameValuePairs.add(new BasicNameValuePair("val[]", Integer.toString(mCur.getInt(valColIndex))));
+                        nameValuePairs.add(new BasicNameValuePair("hash[]", mCur.getString(hashColIndex)));
                     } while (mCur.moveToNext());
 
-                }
+                    httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs, "UTF-8"));
+                    HttpResponse response = httpClient.execute(httppost);
 
-                // Если неверный ключ синхронизации - то все ответы будут такие, включая последний.
-                // Поэтому можно анализировать только его
-                if (tmp.equalsIgnoreCase("WRONG_SECRET_KEY")) {
-                    result = mContext.getResources().getString(R.string.err_wrong_key);
-                } else {
-                    result = String.format(mContext.getResources().getString(R.string.info_sync_complete), Integer.toString(rowsInserted), Integer.toString(rowsDeleted));
-                    //result = "Записано: " + Integer.toString(rowsInserted) + ", удалено: " + Integer.toString(rowsDeleted);
+                    if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+                        BufferedReader reader = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
+                        StringBuilder sb = new StringBuilder();
+                        String line = null;
+                        while ((line = reader.readLine()) != null) {
+                            sb.append(line + System.getProperty("line.separator"));
+                        }
+                        String answer = sb.toString();
+                        answer = answer.replaceAll("(\\r|\\n)", "");
+
+                        if (answer.equalsIgnoreCase("ok")) {
+                            dbHelper.deleteExpenses();
+                            result = "Синхронизация успешна";
+                        } else if (answer.equalsIgnoreCase("WRONG_SECRET_KEY")) {
+                            result = mContext.getResources().getString(R.string.err_wrong_key);
+                        }
+                    }
                 }
 
                 mCur.close();
@@ -120,48 +118,6 @@ public class ThreadSyncExpenses extends Thread {
 
         }
 
-    }
-
-
-    public String Go(String p_date, String p_et, String p_comment, String p_cat, String p_val, String p_hash) {
-
-        String url = "http://hb.perm.ru/android/saveexpense/key/" + mSecretKey;
-        String answer = "";
-
-        try {
-            HttpClient httpClient = new DefaultHttpClient();
-
-            HttpPost httppost = new HttpPost(url);
-            List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(5);
-
-            nameValuePairs.add(new BasicNameValuePair("date", p_date));
-            nameValuePairs.add(new BasicNameValuePair("et", p_et));
-            nameValuePairs.add(new BasicNameValuePair("comment", p_comment));
-            nameValuePairs.add(new BasicNameValuePair("cat", p_cat));
-            nameValuePairs.add(new BasicNameValuePair("val", p_val));
-            nameValuePairs.add(new BasicNameValuePair("hash", p_hash));
-
-            //Log.d("hb", p_hash);
-
-            httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs, "UTF-8"));
-
-            HttpResponse response = httpClient.execute(httppost);
-
-            if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-                BufferedReader reader = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
-                StringBuilder sb = new StringBuilder();
-                String line = null;
-                while ((line = reader.readLine()) != null) {
-                    sb.append(line + System.getProperty("line.separator"));
-                }
-                answer = sb.toString();
-                answer = answer.replaceAll("(\\r|\\n)", "");
-            }
-        } catch (Exception e) {
-            answer = "EX5! " + e.toString() + " Message:" + e.getMessage();
-        }
-
-        return answer;
     }
 
 

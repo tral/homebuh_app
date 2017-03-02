@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <resources>
-    <color name="lolli_primary">#00bcd4</color> <!-- 500 -->
-    <color name="lolli_top">#0097a7</color> <!-- 700 -->
+    <color name="lolli_primary">#8BC34A</color> <!-- 500 -->
+    <color name="lolli_top">#689F38</color> <!-- 700 -->
     <color name="accent">#ff9100</color> <!-- A200/A400/A700 -->
-    <color name="lolli_background">#e0f7fa</color> <!-- 50 light / 900 dark -->
-    <color name="lolli_btn">#4dd0e1</color> <!-- 300 -->
+    <color name="lolli_background">#F1F8E9</color> <!-- 50 light / 900 dark -->
+    <color name="lolli_btn">#AED581</color> <!-- 300 -->
 </resources>

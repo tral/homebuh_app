@@ -210,6 +210,17 @@
 
                     android:layout_height="32dp"
                     android:layout_weight="1" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/linearLayoutCat2"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/linearLayoutCat1"
+                android:orientation="horizontal">
+
                 <Spinner
                     android:id="@+id/spinnerCat2"
                     android:layout_width="0dip"
@@ -222,7 +233,7 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
-                android:layout_below="@+id/linearLayoutCat1"
+                android:layout_below="@+id/linearLayoutCat2"
                 android:orientation="horizontal">
 
                 <TextView

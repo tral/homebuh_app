@@ -426,7 +426,6 @@ public class MainActivity extends ActionBarActivity
         sca2 = new SimpleCursorAdapter(this, android.R.layout.simple_spinner_item, Cat2Cursor, adapterCols, adapterRowViews, 0);
         sca2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spn2.setAdapter(sca2);
-        if (Cat2Cursor.getCount()>1) {spn2.performClick();}
         dbHelper.close();
 
 
@@ -441,8 +440,12 @@ public class MainActivity extends ActionBarActivity
                 this.loadCategoriesLevel2(id);
                 mSumVal.requestFocus();
                 getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+                //MainActivity.this.ShowToast("1, ID=" + String.format("%d", id), Toast.LENGTH_SHORT);
+                if (id>0) {spn2.performClick();}
                 break;
             case R.id.spinnerCat2:
+                //MainActivity.this.ShowToast("2, ID=" + String.format("%d", id), Toast.LENGTH_SHORT);
+                //if (Cat2Cursor.getCount()>1) {spn2.performClick();}
                 break;
         }
     }

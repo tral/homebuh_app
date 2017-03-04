@@ -90,6 +90,7 @@ public class MainActivity extends ActionBarActivity
     ToggleButton tb4;
     ToggleButton tb5;
     ToggleButton tb6;
+    Button tbMore;
 
     // Buttons
     int mNotifCount = 0;
@@ -278,17 +279,27 @@ public class MainActivity extends ActionBarActivity
         tb4 = (ToggleButton) findViewById(R.id.toggleButton4);
         tb5 = (ToggleButton) findViewById(R.id.toggleButton5);
         tb6 = (ToggleButton) findViewById(R.id.toggleButton6);
+        tbMore = (Button) findViewById(R.id.buttonMore);
         tb1.setOnCheckedChangeListener(this);
         tb2.setOnCheckedChangeListener(this);
         tb3.setOnCheckedChangeListener(this);
         tb4.setOnCheckedChangeListener(this);
         tb5.setOnCheckedChangeListener(this);
         tb6.setOnCheckedChangeListener(this);
+        tbMore.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                spn1.performClick();
+            }
+        });
+
         spn1 = (Spinner) findViewById(R.id.spinnerCat1);
-        spn1.setOnItemSelectedListener(this);
         spn2 = (Spinner) findViewById(R.id.spinnerCat2);
+
+        spn1.setOnItemSelectedListener(this);
         spn2.setOnItemSelectedListener(this);
         this.loadCategoriesLevel1();
+
+
 
         // Sum
         mSumVal = (EditText) findViewById(R.id.editText1);
@@ -402,6 +413,8 @@ public class MainActivity extends ActionBarActivity
         dbHelper.close();
     }
 
+
+
     protected void loadCategoriesLevel2(long parent_id) {
         dbHelper = new DBHelper(this);
 
@@ -413,8 +426,10 @@ public class MainActivity extends ActionBarActivity
         sca2 = new SimpleCursorAdapter(this, android.R.layout.simple_spinner_item, Cat2Cursor, adapterCols, adapterRowViews, 0);
         sca2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spn2.setAdapter(sca2);
-
+        if (Cat2Cursor.getCount()>1) {spn2.performClick();}
         dbHelper.close();
+
+
     }
 
     // Categories 1 - select element
@@ -424,6 +439,8 @@ public class MainActivity extends ActionBarActivity
         switch (parent.getId()) {
             case R.id.spinnerCat1:
                 this.loadCategoriesLevel2(id);
+                mSumVal.requestFocus();
+                getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
                 break;
             case R.id.spinnerCat2:
                 break;
@@ -717,6 +734,8 @@ public class MainActivity extends ActionBarActivity
         } else {
             // text.setText("Button unchecked");
         }
+        mSumVal.requestFocus();
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
     }
 
 

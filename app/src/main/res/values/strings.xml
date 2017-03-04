@@ -10,6 +10,7 @@
     <string name="shortcut_button4">Уход</string>
     <string name="shortcut_button5">Такси</string>
     <string name="shortcut_button6">Дача</string>
+    <string name="shortcut_button_more">Другое...</string>
 
     <string name="sync_button">Синхронизация</string>
     <string name="save_button">Сохранить</string>

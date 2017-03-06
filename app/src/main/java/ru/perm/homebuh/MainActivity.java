@@ -313,7 +313,8 @@ public class MainActivity extends ActionBarActivity
 
         // Фокус, чтобы показать сразу клавиатуру
         mSumVal.requestFocus();
-        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+        InputMethodManager imm = (InputMethodManager) getSystemService(MainActivity.INPUT_METHOD_SERVICE);
+        imm.showSoftInput(mSumVal, InputMethodManager.SHOW_IMPLICIT);
 
     }
 
@@ -321,6 +322,10 @@ public class MainActivity extends ActionBarActivity
     protected void onResume() {
         super.onResume();
         this.setTodayDate();
+        // Фокус, чтобы показать сразу клавиатуру
+        mSumVal.requestFocus();
+        InputMethodManager imm = (InputMethodManager) getSystemService(MainActivity.INPUT_METHOD_SERVICE);
+        imm.showSoftInput(mSumVal, InputMethodManager.SHOW_IMPLICIT);
     }
 
 
@@ -438,8 +443,6 @@ public class MainActivity extends ActionBarActivity
         switch (parent.getId()) {
             case R.id.spinnerCat1:
                 this.loadCategoriesLevel2(id);
-                mSumVal.requestFocus();
-                getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
                 //MainActivity.this.ShowToast("1, ID=" + String.format("%d", id), Toast.LENGTH_SHORT);
                 if (id>0) {spn2.performClick();}
                 break;
@@ -737,8 +740,6 @@ public class MainActivity extends ActionBarActivity
         } else {
             // text.setText("Button unchecked");
         }
-        mSumVal.requestFocus();
-        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
     }
 
 

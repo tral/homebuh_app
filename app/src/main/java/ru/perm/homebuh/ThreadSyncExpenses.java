@@ -9,11 +9,11 @@ import android.os.Message;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
+
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 
 import java.io.BufferedReader;
@@ -64,9 +64,10 @@ public class ThreadSyncExpenses extends Thread {
                     int valColIndex = mCur.getColumnIndex("val");
                     int hashColIndex = mCur.getColumnIndex("hash");
 
-                    String url = "http://hb.perm.ru/android/saveexpense/key/" + mSecretKey;
+                    String url = "https://hb.perm.ru/android/saveexpense/key/" + mSecretKey;
 
-                    HttpClient httpClient = new DefaultHttpClient();
+                    //HttpClient httpClient = new DefaultHttpClient();
+                    HttpClient httpClient = DBHelper.createHttpClient();
                     HttpPost httppost = new HttpPost(url);
                     List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 
@@ -119,7 +120,6 @@ public class ThreadSyncExpenses extends Thread {
         }
 
     }
-
 
     public void setState(int state) {
         mState = state;

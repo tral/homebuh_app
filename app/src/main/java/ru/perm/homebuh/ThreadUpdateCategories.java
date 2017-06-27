@@ -39,8 +39,9 @@ public class ThreadUpdateCategories extends Thread {
             lWasError = false;
 
             String result = ";(";
-            String url = "http://hb.perm.ru/android/getcategories/key/" + mSecretKey;
-            HttpClient httpClient = new DefaultHttpClient();
+            String url = "https://hb.perm.ru/android/getcategories/key/" + mSecretKey;
+            //HttpClient httpClient = new DefaultHttpClient();
+            HttpClient httpClient = DBHelper.createHttpClient();
             HttpGet httpGet = new HttpGet(url);
             try {
                 HttpResponse response = httpClient.execute(httpGet);
